@@ -6,5 +6,5 @@ raw_data/
 **/__pycache__/
 .env
 .python-version
-data-sourcing
-drivers/
+data-sourcing/
+

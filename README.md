@@ -1,4 +1,24 @@
+# Indeed scraper
+
+Scrapes job offers from Indeed.com. Requires choosing a job title, a location, and a limit on the job offers to extract. Further parameters can be passed down to the Indeed API. When not specified, the default API parameters are:
+
+```python
+start = 0 #the job offer at which to start
+filter = 1 #the API tries to filter out duplicate postings
+sort = 'date' #get the newest job offers (alternative is 'relevance')
+```
+
+To run the scraper:
+
+```bash
+pip install -r requirements.txt
+python -m find-your-dream-job.IndeedScraper
+```
+
+ Output is saved in `raw_data/indeed_scrapes/`. Filename format is `jobtitle_location_date_limit`. 
+
 # Data analysis
+
 - Document here the project: find-your-dream-job
 - Description: Project Description
 - Data Source:
