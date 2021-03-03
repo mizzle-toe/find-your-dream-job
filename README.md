@@ -1,11 +1,13 @@
-# Indeed scraper
+# Indeed Scraper
 
-Scrapes job offers from Indeed.com.  Further parameters can be passed down to the Indeed API. When not specified, the default API parameters are:
+Scrapes job offers from Indeed.com. To use it, download `chromedriver` from the Google Drive folders and place it in `drivers/`. 
+
+Supports Indeed API parameters. When not specified, the default parameters are:
 
 ```python
 start = 0 #the job offer at which to start
 filter = 1 #the API tries to filter out duplicate postings
-sort = 'date' #get the newest job offers (alternative is 'relevance')
+sort = 'date' #get the newest job offers (alternative is 'relevant')
 ```
 
 To run the scraper:
@@ -15,7 +17,7 @@ pip install -r requirements.txt
 python -m find-your-dream-job.IndeedScraper
 ```
 
-Input a job title, a location, and a limit on the job offers to extract. 
+Input job title, location, and a limit on the job offers to extract. 
 
 Output is saved in `raw_data/indeed_scrapes/`. Filename format is `jobtitle_location_date_limit`. 
 
