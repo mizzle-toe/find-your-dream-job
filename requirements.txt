@@ -31,3 +31,6 @@ joblib
 memoized-property
 termcolor
 
+# NLP
+nltk
+langdetect

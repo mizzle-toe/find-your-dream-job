@@ -18,21 +18,8 @@ import json
 import random
 from datetime import date 
 import os
+from fydjob.utils import split_url, compose_url
 
-def split_url(url):
-    '''Splits an URL into base URL (String) and parameters(dict).'''
-    base, params_str = url.split('?')
-    params_str =[str_.split('=') for str_ in params_str.split('&')]
-    params = {el[0]: el[1] for el in params_str}
-    return base, params
-
-def compose_url(base, params):
-    '''Build URL from base (String) and params (dict).'''
-    params_strings = []
-    for key, val in params.items():
-        params_strings.append(f"{key}={val}") 
-    params_string = '&'.join(params_strings)
-    return base + '?' + params_string
 
 class IndeedScraper:
     def __init__(self, 
@@ -40,7 +27,7 @@ class IndeedScraper:
                  chrome_driver_path='drivers/chromedriver'):
         self.base = base
         self.chrome_driver_path = chrome_driver_path
-        self.output_path = 'raw_data/indeed_scrapes'
+        self.output_path = os.path.join('raw_data', 'indeed_scrapes') 
         
         if not os.path.exists(self.output_path):
             try:
