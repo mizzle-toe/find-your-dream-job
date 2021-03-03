@@ -28,7 +28,7 @@ if st.sidebar.button('Analyze'):
     # filter data based on city input  only if we get the city
 
 # switch between pages by using Radio Button
-st.radio('Radio', [1,2,3])
+st.sidebar.radio('View Page', ['Overview','Job Offers'])
 
 # Numerical KPI
 no_jd = str(data['position'].count())
@@ -46,7 +46,7 @@ st.write(no_comp)
 st.markdown("""
 ### Top 30 available jobs by company:""")
 #altair
-@st.cache
+@st.cache(allow_output_mutation=True)
 def get_top_30():
     data_comp = data.groupby(data['company']).count().reset_index()
     top_30= data_comp.nlargest(30, 'position').drop(columns=['description', 'url'])
