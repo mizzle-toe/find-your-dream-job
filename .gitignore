@@ -7,4 +7,4 @@ raw_data/
 .env
 .python-version
 data-sourcing/
-
+drivers/chromedriver
