@@ -1,4 +1,66 @@
+# Install model
+
+Install package in development mode: 
+
+```bash
+pip install -e .
+```
+
+Package name is `fydjob`. Example:
+
+```python
+import fydjob.utils as utils 
+from fydjob.utils import tokenize_text_field
+```
+
+# Indeed Scraper
+
+Scrapes job offers. To use it, download `chromedriver` from the Google Drive folders and place it in `drivers/`. 
+
+Supports Indeed API parameters. When not specified, the default parameters are:
+
+```python
+start = 0 #the job offer at which to start
+filter = 1 #the API tries to filter out duplicate postings
+sort = 'date' #get the newest job offers (alternative is 'relevant')
+```
+
+To run the scraper:
+
+```bash
+pip install -r requirements.txt
+python -m find-your-dream-job.IndeedScraper
+```
+
+Input job title, location, and a limit on the job offers to extract. 
+
+Output is saved in `raw_data/indeed_scrapes/`. Filename format is `jobtitle_location_date_limit`. 
+
+# Preprocessor
+
+Apply basic preprocessing to Indeed jobs data. To run as a script:
+
+```bash
+python -m fydjob.IndeedProcessor 
+```
+
+To run as a class: 
+
+``` python
+from fydjob.IndeedProcessor import IndeedProcessor
+ip = IndeedProcessor()
+```
+
+---
+
+### Boilerplate below
+
+---
+
+
+
 # Data analysis
+
 - Document here the project: find-your-dream-job
 - Description: Project Description
 - Data Source:
@@ -35,7 +97,7 @@ git push -u origin master
 git push -u origin --tags
 ```
 
-Functionnal test with a script:
+Functional test with a script:
 
 ```bash
 cd
