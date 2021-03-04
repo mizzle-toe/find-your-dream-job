@@ -10,3 +10,4 @@ data-sourcing/
 drivers/chromedriver
 indeed-preproc
 fydjob/output/
+fydjob/database/
