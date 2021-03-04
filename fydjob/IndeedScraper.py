@@ -11,29 +11,35 @@ Filter: If set1 to 0, returns all job offers.
 
 
 """
+import fydjob
+import os
 from time import sleep
 import urllib.parse
 from selenium import webdriver
 import json
 import random
 from datetime import date 
-import os
 from fydjob.utils import split_url, compose_url
 
+home_path = os.path.dirname(fydjob.__file__)
 
 class IndeedScraper:
-    def __init__(self, 
-                 base="https://de.indeed.com/jobs",
-                 chrome_driver_path='drivers/chromedriver'):
-        self.base = base
-        self.chrome_driver_path = chrome_driver_path
-        self.output_path = os.path.join('raw_data', 'indeed_scrapes') 
+    def __init__(self):
+        self.base = "https://de.indeed.com/jobs"
+        self.chrome_driver_path = os.path.join(home_path, 'drivers', 'chromedriver')
+        self.output_path = os.path.join(home_path, 'output', 'indeed_scrapes')
         
+        if not os.path.exists(os.path.join(home_path, 'output')):
+            try:
+                os.mkdir(os.path.join(home_path, 'output'))
+            except:
+                print("Warning. Creation of 'output' directory failed.")
+
         if not os.path.exists(self.output_path):
             try:
                 os.mkdir(self.output_path)
             except:
-                print(f"Warning. Creation of output directory at {self.output_path} failed.")
+                print(f"Warning. Creation of {self.output_path} failed.")
             
         self.driver = None
         self.jobs_elements = []
@@ -79,7 +85,7 @@ class IndeedScraper:
         self.driver = webdriver.Chrome(self.chrome_driver_path)
         print('Started Chrome driver.')
         
-    def _change_page(self, previous, value=None, back=False):
+    def _change_page(self, value=None, back=False):
         '''Changes page by setting start to defined value or adding ten to current value.'''
         this_url = self.driver.current_url
         base, params = split_url(this_url)
@@ -126,12 +132,17 @@ class IndeedScraper:
             job_info = job_div.find_element_by_id('vjs-jobinfo').text
         except:
             job_info = None
+        try:
+            job_link = self.driver.current_url
+        except:
+            job_link = None
             
         return {'job_title': job_title,
                 'job_text': job_text,
                 'company': company,
                 'location': location,
-                'job_info': job_info}
+                'job_info': job_info,
+                'job_link': job_link}
         
     def _get_jobs_webelements(self):
         '''Extracts jobs webelements from current page.
@@ -147,9 +158,14 @@ class IndeedScraper:
                 sleep(idle)
                 je.click()
                 sleep(10)
+                #after the click, indeed will sometimes open a new tab!
+                print(self.driver.current_url)
+                if self.base not in self.driver.current_url.lower():
+                    print("Opened a new tab! Trying to go back...")
+                    self.driver.back()
                 job_div = self.driver.find_element_by_id('vjs-container')            
                 job = self.get_job_attributes(job_div)
-                print(job)
+                #print(job)
                 jobs.append(job)
             except:
                 print('Could not get job.')
@@ -205,6 +221,7 @@ class IndeedScraper:
         long_wait_time = random.choice(range(120, 600))
         
         while True:
+            this_url = self.driver.current_url
             wait_counter += 1
             if wait_counter == long_wait_onset:
                 print(f"Coffee time! Sleeping for {long_wait_time} seconds.")
@@ -218,7 +235,13 @@ class IndeedScraper:
             
             try:
                 new_jobs = self._get_jobs_webelements()
-                self.jobs_elements += new_jobs
+                if new_jobs:
+                    self.jobs_elements += new_jobs
+                else:
+                     #we did not retrieve new jobs!
+                     #we might be lost. return to previous url
+                     print("No jobs retrieved. Attempting to revert URL.")
+                     self.driver.get(this_url)
             except:
                 print('Error. Could not continue with job extraction.')
                 break
@@ -232,7 +255,7 @@ class IndeedScraper:
             start_value += 10
             
             try:
-                self._change_page(start_value)
+                self._change_page(value=start_value)
             except:
                 print("Error. Could not switch page.")
                 break
