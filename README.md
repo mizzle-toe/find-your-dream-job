@@ -34,11 +34,11 @@ python -m fydjob.IndeedScraper
 
 Input job title, location, and a limit on the job offers to extract. 
 
-Output is saved in `raw_data/indeed_scrapes/`. Filename format is `jobtitle_location_date_limit`. 
+Output is saved in `fydjob/output/indeed_scrapes/`. Filename format is `jobtitle_location_date_limit`. 
 
 # Preprocessor
 
-Apply basic preprocessing to Indeed jobs data. To run as a script:
+Loads JSON files from `fydjob/output/indeed_scrapes` and Kaggle file from `fydjob/output/kaggle`. Joins the dataframes and applies basic preprocessing. To run as a script:
 
 ```bash
 python -m fydjob.IndeedProcessor 
@@ -50,6 +50,8 @@ To run as a class:
 from fydjob.IndeedProcessor import IndeedProcessor
 ip = IndeedProcessor()
 ```
+
+Output is saved in `fydjob/output/indeed_proc`
 
 # Skills dictionary
 
