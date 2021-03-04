@@ -29,7 +29,7 @@ To run the scraper:
 
 ```bash
 pip install -r requirements.txt
-python -m find-your-dream-job.IndeedScraper
+python -m fydjob.IndeedScraper
 ```
 
 Input job title, location, and a limit on the job offers to extract. 
@@ -50,6 +50,20 @@ To run as a class:
 from fydjob.IndeedProcessor import IndeedProcessor
 ip = IndeedProcessor()
 ```
+
+# Skills dictionary
+
+The skills dictionary is assembled [here](https://docs.google.com/spreadsheets/d/1McSTyy1-kRt-B_Vs8Z-S7OEDVPgWSPwWpCHGnY8AKP0/edit?usp=sharing). The file spreadsheet is downloaded as Excel file and placed into `fydjob/data/dicts/skills_dict.xlsx`. Then:
+
+```python
+from fydjob import utils
+utils.save_skills()     #extracts skills and saves them in JSON
+utils.load_skills()     #loads the skills from JSON file
+```
+
+This is just the setup. If you haven't changed the pipeline, just run `utils.load_skills` to get the skills.
+
+
 
 ---
 
