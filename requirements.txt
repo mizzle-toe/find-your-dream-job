@@ -11,6 +11,7 @@ selenium
 numpy
 pandas
 scikit-learn
+openpyxl
 
 # tests/linter
 black

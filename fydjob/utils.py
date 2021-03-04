@@ -6,13 +6,18 @@ Created on Wed Mar  3 12:38:33 2021
 @author: vlud
 """
 
+import fydjob
+import os
+import json
 import string
 from langdetect import detect
 from nltk.corpus import stopwords 
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 import numpy as np
+import pandas as pd
 
+home_path = os.path.dirname(fydjob.__file__)
 
 def keep_letters(word):
     '''Removes all chars that are not letters.'''
@@ -86,3 +91,27 @@ def compose_url(base, params):
         params_strings.append(f"{key}={val}") 
     params_string = '&'.join(params_strings)
     return base + '?' + params_string
+
+def save_skills():
+    '''Converts Excel skills file into JSON.'''
+    path = os.path.join(home_path, 'data', 'dicts', 'skills_dict.xlsx')
+    json_path = os.path.join(home_path, 'data', 'dicts', 'skills_dict.json')
+    skill_names = ['business', 'knowledge', 'programming', 
+                   'soft_skills', 'tech_adjectives']
+    skills = {skill: None for skill in skill_names}
+    for sheet in range(5):
+        l = list(pd.read_excel(path, sheet_name=sheet).iloc[:, 0])
+        skills[skill_names[sheet]] = l
+    with open(json_path, 'w') as file:
+        json.dump(skills, file)
+    print(f"Skills dictionary saved at {json_path}.")
+    
+def load_skills():
+    '''Loads skills from JSON file.'''
+    json_path = os.path.join(home_path, 'data', 'dicts', 'skills_dict.json')
+    if not os.path.exists(json_path):
+        print("Warning. JSON file not found. Run save_skills first.")
+        return
+    with open(json_path) as file:
+        skills = json.load(file)
+    return skills
