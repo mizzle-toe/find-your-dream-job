@@ -142,7 +142,8 @@ class IndeedScraper:
                 'company': company,
                 'location': location,
                 'job_info': job_info,
-                'job_link': job_link}
+                'job_link': job_link,
+                'date_extracted': date.today.isoformat()}
         
     def _get_jobs_webelements(self):
         '''Extracts jobs webelements from current page.
@@ -220,8 +221,12 @@ class IndeedScraper:
         long_wait_onset = random.choice(range(50, 100))
         long_wait_time = random.choice(range(120, 600))
         
+        #save url before extracting jobs so we go back to it in case something happens
+        previous_url = self.driver.current_url
+        #scraping will stop after 10 consecutive fails
+        total_attempts = 10
+        
         while True:
-            this_url = self.driver.current_url
             wait_counter += 1
             if wait_counter == long_wait_onset:
                 print(f"Coffee time! Sleeping for {long_wait_time} seconds.")
@@ -236,12 +241,19 @@ class IndeedScraper:
             try:
                 new_jobs = self._get_jobs_webelements()
                 if new_jobs:
+                    total_attempts = 0
                     self.jobs_elements += new_jobs
                 else:
                      #we did not retrieve new jobs!
                      #we might be lost. return to previous url
-                     print("No jobs retrieved. Attempting to revert URL.")
-                     self.driver.get(this_url)
+                     total_attempts -= 1
+        
+                     if not total_attempts: 
+                         print("Failed too many times. Shutting down.")
+                         break
+                     else:
+                         print("No jobs retrieved. Attempting to revert URL.")
+                         self.driver.get(previous_url)
             except:
                 print('Error. Could not continue with job extraction.')
                 break
@@ -249,6 +261,10 @@ class IndeedScraper:
             if limit:
                 if len(self.jobs_elements) >= limit:
                     break
+            
+            #save url before switching page
+            this_url = self.driver.current_url
+            previous_url = this_url
             
             print(len(self.jobs_elements))
             self.save_jobs(save_path)
