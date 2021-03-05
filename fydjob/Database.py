@@ -73,14 +73,24 @@ class Database:
     def populate(self):
         df = joblib.load(self.data_path)[:10]
         cur = self.conn.cursor()
+        last_id = c.execute('SELECT last_insert_rowid()').fetchone()[0]
         
         for i, row in df.iterrows():
+            
+            #check if text is already in db
+            text = row['job_text']
+            query = c.execute(f'SELECT * FROM jobads WHERE job_text="{text}"').fetchall()
+            if query:
+                print('Job offer already present. Skipping add.')
+                continue
             
             basic_vals = row[columns]
             token_vals = row[token_columns]
             
-            last_id = c.execute('SELECT last_insert_rowid()').fetchone()[0]
+            last_id = c.execute('SELECT MAX(job_id) FROM jobads').fetchone()[0]
+            if not last_id : last_id = 0
             new_id = last_id + 1
+            print(new_id)
             
             vals = [new_id] + list(basic_vals)
             q_marks = f"({'?,'*len(vals)}"[:-1] + ')'
