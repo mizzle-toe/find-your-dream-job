@@ -106,7 +106,7 @@ class IndeedProcessor:
         
     def export(self):
         today_str = date.today().isoformat()
-        filename = f"ip_{today_str}.joblib"
+        filename = "processed_data.joblib"
         export_path = os.path.join(self.export_folder, filename)
         joblib.dump(self.df_output, export_path)
         print(f'Saved dataframe at {export_path}.')
