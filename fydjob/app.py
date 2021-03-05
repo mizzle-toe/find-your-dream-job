@@ -10,7 +10,7 @@ from fydjob import utils
 # get data, use API later instead
 data = joblib.load('/Users/jasminkazi/code/mizzle-toe/find-your-dream-job/fydjob/output/indeed_proc/processed_data.joblib')
 data = data.drop(columns=['job_info_tokenized','job_text_tokenized_titlecase', 'job_title_tokenized'])
-data = data.sample(n=200)
+data = data.sample(n=1000)
 #Sidebar
 # Title
 st.sidebar.markdown("""
@@ -28,7 +28,7 @@ comp = st.sidebar.text_input('Company')
 #Button: if button is clicked, jump to next page and show exploratory view
 if st.sidebar.button('Analyze'):
     # filter data based on job input
-    data = data.loc[data.position.str.contains(regex_jd)]
+    data = data.loc[data.job_title.str.contains(regex_jd)]
     # filter data based on city input  only if we get the city
 
 # switch between pages by using Radio Button
