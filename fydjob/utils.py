@@ -115,3 +115,10 @@ def load_skills():
     with open(json_path) as file:
         skills = json.load(file)
     return skills
+
+def question_marks(size, before = [], after =[]):
+    '''Returns a sequence of question marks fit for inserting values into SQLITE.
+    It is possible to append elements before and after.
+    '''
+    lst = [str(x) for x in before] + ['?']*size + [str(x) for x in after]
+    return ','.join(lst)
