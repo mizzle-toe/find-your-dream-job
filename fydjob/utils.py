@@ -49,9 +49,7 @@ def tag_language(text):
 def remove_stopwords(text):
     '''Remove basic stopwords.'''
     stop_words = set(stopwords.words('english')) 
-    word_tokens = word_tokenize(text) 
-    text = [w for w in word_tokens if not w in stop_words] 
-    return text
+    return [w for w in text if not w in stop_words] 
 
 def lemmatize_words(text):
     '''Lemmatize words.'''
@@ -125,3 +123,16 @@ def question_marks(size, before = [], after =[]):
     '''
     lst = [str(x) for x in before] + ['?']*size + [str(x) for x in after]
     return ','.join(lst)
+
+def get_similarities(text, text_vector, keep_perfect=True):
+    '''Returns a list of similarity scores between a text and all texts in a text vector.
+    Similarity a value between 0 and 1 that shows the proportion of shared unique 
+    tokens between the texts. 
+    If keep_perfect is false, it will not return perfect similarities of 1. 
+    '''
+    similarities = []
+    for i, t in enumerate(text_vector):
+        sim = len(set(text) & set(t)) / (len(set(text)) + len(set(t))) * 2
+        similarities.append((i, sim))
+    similarities = sorted(similarities, key=lambda x: x[1], reverse=True)
+    return similarities 

@@ -73,6 +73,8 @@ class Database:
         cur = conn.cursor()
         
         for i, row in df.iterrows():
+            #reorder row! some columns seem to be scrambled in the db
+            row = row[list(df.columns)]
             print(i)
             #check if text is already in db
             #sanitize quotation marks to avoid errors!
@@ -93,8 +95,14 @@ class Database:
             new_id = last_id + 1
             
             vals = [new_id] + list(row)
-            q_marks = f"({'?,'*len(vals)}"[:-1] + ')'
-            sql = "INSERT INTO jobads VALUES" + q_marks
+            #q_marks = f"({'?,'*len(vals)}"[:-1] + ')'
+            q_marks = question_marks(len(vals))
+            sql = f'''INSERT INTO jobads(job_id, job_title, job_text, 
+                                        company, location, job_info, 
+                                        job_link, query_text, source, 
+                                        tag_language, reviews)
+                      VALUES ({q_marks})
+                      '''
             
             try:
                 cur.execute(sql, vals)
