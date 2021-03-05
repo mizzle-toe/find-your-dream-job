@@ -5,12 +5,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import joblib
 from fydjob import utils
+from gensim.models import Word2Vec
 
 
 # get data, use API later instead
 data = joblib.load('/Users/jasminkazi/code/mizzle-toe/find-your-dream-job/fydjob/output/indeed_proc/processed_data.joblib')
 data = data.drop(columns=['job_info_tokenized','job_text_tokenized_titlecase', 'job_title_tokenized'])
-data = data.sample(n=4000)
+data = data.sample(n=2000)
 #Sidebar
 # Title
 st.sidebar.markdown("""
@@ -24,11 +25,15 @@ jd = st.sidebar.text_input('Job Description', 'Data Scientist')
 regex_jd = '^'+jd
 city = st.sidebar.text_input('City', 'Berlin')
 comp = st.sidebar.text_input('Company')
+skill = st.sidebar.text_input('Skill','python')
 
 #Button: if button is clicked, jump to next page and show exploratory view
 if st.sidebar.button('Analyze'):
     # filter data based on job input
     data = data.loc[data.job_title.str.contains(regex_jd)]
+    #search for skill
+    word = [skill]
+    
     # filter data based on city input  only if we get the city
 
 # switch between pages by using Radio Button
@@ -189,6 +194,13 @@ st.write(c_skills)
 
 
 #Detail page
+
+w2v_model = Word2Vec.load("../fydjob/data/models/w2v_model_baseline.model")
+word = [skill]
+st.markdown("""
+### Find the clostest skills for:""")
+st.write(skill)
+df_words= pd.DataFrame(w2v_model.wv.most_similar(word), columns=['Similar word', 'distance']) # works with single words
 #table
-#st.table(data)
+st.table(df_words)
 
