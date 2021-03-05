@@ -10,7 +10,7 @@ from fydjob import utils
 # get data, use API later instead
 data = joblib.load('/Users/jasminkazi/code/mizzle-toe/find-your-dream-job/fydjob/output/indeed_proc/processed_data.joblib')
 data = data.drop(columns=['job_info_tokenized','job_text_tokenized_titlecase', 'job_title_tokenized'])
-data = data.sample(n=1000)
+data = data.sample(n=4000)
 #Sidebar
 # Title
 st.sidebar.markdown("""
@@ -60,8 +60,16 @@ def get_jobtitles():
     c_jd= alt.Chart(source_job).mark_bar().encode(
     x='Count',
     y='Job'
-)
-    return c_jd
+    )
+    text = c_jd.mark_text(
+    align='left',
+    baseline='middle',
+    dx=3  # Nudges text to right so it doesn't appear on top of the bar
+    ).encode(
+        text='Count:Q'
+    )
+
+    return c_jd+text
 
 c_jd = get_jobtitles()
 st.write(c_jd)
