@@ -98,11 +98,6 @@ class IndeedProcessor:
         
         df['location'] = df.location.apply(utils.keep_letters)
         
-        df['job_info_tokenized'] = tokenize_text_field(df['job_info'])
-        df['job_text_tokenized'] = tokenize_text_field(df['job_text'])
-        df['job_text_tokenized_titlecase'] = tokenize_text_field(df['job_text'], to_lowercase=False)
-        df['job_title_tokenized'] = tokenize_text_field(df['job_title']) 
-
         self.df_output = df
         print('Preprocessing completed.')
         

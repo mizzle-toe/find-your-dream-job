@@ -14,13 +14,6 @@ from fydjob.utils import question_marks
 
 home_path = os.path.dirname(fydjob.__file__)
 
-columns = ['job_title', 'job_text',	'company', 'location',	
-           'job_info', 'job_link', 'query_text', 'source',	
-           'tag_language', 'reviews']
-
-token_columns = ['job_info_tokenized', 'job_text_tokenized', 
-               'job_text_tokenized_titlecase', 'job_title_tokenized']
-
 class Database:
     '''Manages connection to SQLITE db.'''
     
@@ -55,17 +48,6 @@ class Database:
                            )
                           ''')
          
-        for col in token_columns:
-            conn.execute(f'''
-                          CREATE TABLE IF NOT EXISTS {col}
-                          (id integer PRIMARY KEY,
-                           job_id INTEGER NOT NULL,
-                           list_index INTEGER,
-                           token TEXT,
-                           FOREIGN KEY(job_id) REFERENCES jobads(job_id)
-                           )
-                          ''')
-        
         conn.commit()
         conn.close()
                           
@@ -106,14 +88,11 @@ class Database:
                 print("Failed to check for duplicates in database. Will add anyway.")
                 pass
             
-            basic_vals = row[columns]
-            token_vals = row[token_columns]
-            
             last_id = cur.execute('SELECT MAX(job_id) FROM jobads').fetchone()[0]
             if not last_id : last_id = 0
             new_id = last_id + 1
             
-            vals = [new_id] + list(basic_vals)
+            vals = [new_id] + list(row)
             q_marks = f"({'?,'*len(vals)}"[:-1] + ')'
             sql = "INSERT INTO jobads VALUES" + q_marks
             
@@ -122,13 +101,6 @@ class Database:
             except:
                 print("Failed to add job at index" + str(i))
                 continue
-            
-            for col in token_columns:
-                tokens = row[col]
-                for list_index, token in enumerate(tokens):
-                    vals = [new_id, list_index, token]
-                    sql = f"INSERT INTO {col} VALUES (NULL, ?, ?, ?)"
-                    cur.execute(sql, vals)
         
         conn.commit()
         conn.close()
@@ -137,28 +109,7 @@ class Database:
     def to_frame(self):
         '''Loads the database as a Pandas dataframe.'''
         conn = sqlite3.connect(self.db_path)
-        cur = conn.cursor()
         df = pd.read_sql_query("SELECT * FROM jobads", conn)
-        
-        '''
-        
-        for col in token_columns:
-            df[col] = None
-        
-        for i, row in df.iterrows():
-            job_id = row['job_id']
-            for col in token_columns:
-                #get the tokens rows from SQL
-                sql = f"SELECT * FROM {col} WHERE job_id={job_id}"
-                result = cur.execute(sql).fetchall()
-                if result:
-                    #sort by third column, which is the tokens list index
-                    result = sorted(result, key=lambda x: x[2])
-                    #extract tokens and insert them in dataframe
-                    tokens = [x[3] for x in result]
-                    df.at[i, col] = tokens
-                    
-        '''
         conn.close()
         return df
     
@@ -173,4 +124,5 @@ class Database:
 #db.reset_all()
 #db.create_tables()
 #db.populate()
-#cur = db.conn.cursor()
+#conn = sqlite3.connect(db.db_path)
+#cur = conn.cursor()
