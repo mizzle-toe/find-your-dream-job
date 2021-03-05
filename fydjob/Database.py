@@ -23,20 +23,23 @@ token_columns = ['job_info_tokenized', 'job_text_tokenized',
 
 class Database:
     '''Manages connection to SQLITE db.'''
+    
     def __init__(self):
-        
+    
         folder = os.path.join(home_path, 'database')
         
         if not os.path.exists(folder):
             os.mkdir(folder)
         
         self.db_path = os.path.join(folder, 'jobs.db')
-        self.conn = sqlite3.connect(self.db_path)
         self.data_path = os.path.join(home_path, 'output', 'indeed_proc', 'processed_data.joblib')
         
     def create_tables(self):
         '''Creates main table to store job postings.'''
-        self.conn.execute('''
+        
+        conn = sqlite3.connect(self.db_path)
+        
+        conn.execute('''
                           CREATE TABLE IF NOT EXISTS jobads
                           (job_id INTEGER UNIQUE PRIMARY KEY,
                            job_title TEXT,
@@ -53,7 +56,7 @@ class Database:
                           ''')
          
         for col in token_columns:
-            self.conn.execute(f'''
+            conn.execute(f'''
                           CREATE TABLE IF NOT EXISTS {col}
                           (id integer PRIMARY KEY,
                            job_id INTEGER NOT NULL,
@@ -63,39 +66,62 @@ class Database:
                            )
                           ''')
         
-        self.conn.commit()
+        conn.commit()
+        conn.close()
                           
     def reset_all(self):
         '''Deletes the database and creates it again. Data and schema will be lost.'''
         os.remove(self.db_path)
-        self.conn = sqlite3.connect(self.db_path)
         
-    def populate(self):
-        df = joblib.load(self.data_path)[:10]
-        cur = self.conn.cursor()
-        last_id = c.execute('SELECT last_insert_rowid()').fetchone()[0]
+    def populate(self, limit=None):
+        '''Populates the database. 
+        WARNING: We are currently not uploading offers which are not tagged as English!
+        '''
+        
+        conn = sqlite3.connect(self.db_path)
+        
+        print("Populating database.")
+        df = joblib.load(self.data_path)
+        print("Loaded data from", self.data_path)
+        
+        if limit:
+            df = df[:limit]
+        
+        df = df[df.tag_language == 'en']
+        cur = conn.cursor()
         
         for i, row in df.iterrows():
-            
+            print(i)
             #check if text is already in db
-            text = row['job_text']
-            query = c.execute(f'SELECT * FROM jobads WHERE job_text="{text}"').fetchall()
-            if query:
-                print('Job offer already present. Skipping add.')
-                continue
+            #sanitize quotation marks to avoid errors!
+            #add percentage at the end for SQL wildcard
+            text = row['job_text'].replace('"', '')[:300] + "%"
+            
+            try:
+                query = cur.execute(f'SELECT * FROM jobads WHERE job_text LIKE "{text}"').fetchall()
+                if query:
+                    print('Job offer already in database. Skipping.')
+                    continue
+            except:
+                print("Failed to check for duplicates in database. Will add anyway.")
+                pass
             
             basic_vals = row[columns]
             token_vals = row[token_columns]
             
-            last_id = c.execute('SELECT MAX(job_id) FROM jobads').fetchone()[0]
+            last_id = cur.execute('SELECT MAX(job_id) FROM jobads').fetchone()[0]
             if not last_id : last_id = 0
             new_id = last_id + 1
-            print(new_id)
             
             vals = [new_id] + list(basic_vals)
             q_marks = f"({'?,'*len(vals)}"[:-1] + ')'
             sql = "INSERT INTO jobads VALUES" + q_marks
-            cur.execute(sql, vals)
+            
+            try:
+                cur.execute(sql, vals)
+            except:
+                print("Failed to add job at index" + str(i))
+                continue
             
             for col in token_columns:
                 tokens = row[col]
@@ -104,20 +130,47 @@ class Database:
                     sql = f"INSERT INTO {col} VALUES (NULL, ?, ?, ?)"
                     cur.execute(sql, vals)
         
-        self.conn.commit()
+        conn.commit()
+        conn.close()
+        print("Done populating database!")
+        
+    def to_frame(self):
+        '''Loads the database as a Pandas dataframe.'''
+        conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
+        df = pd.read_sql_query("SELECT * FROM jobads", conn)
+        
+        '''
+        
+        for col in token_columns:
+            df[col] = None
+        
+        for i, row in df.iterrows():
+            job_id = row['job_id']
+            for col in token_columns:
+                #get the tokens rows from SQL
+                sql = f"SELECT * FROM {col} WHERE job_id={job_id}"
+                result = cur.execute(sql).fetchall()
+                if result:
+                    #sort by third column, which is the tokens list index
+                    result = sorted(result, key=lambda x: x[2])
+                    #extract tokens and insert them in dataframe
+                    tokens = [x[3] for x in result]
+                    df.at[i, col] = tokens
+                    
+        '''
+        conn.close()
+        return df
+    
+    def export_csv(self, path):
+        '''Exports the database as CSV.'''
+        self.to_frame().to_csv(path)
                    
-df_path = os.path.join(home_path, 'output', 'indeed_proc', 'processed_data.joblib')
-df = joblib.load(df_path)
-
-db = Database()
-db.reset_all()
-db.create_tables()
-c = db.conn.cursor()
-
-'''
-def main():
-    db = Database()
-
-if __name__ == "__main__":
-    main() 
-'''
+        
+#df_path = os.path.join(home_path, 'output', 'indeed_proc', 'processed_data.joblib')
+#df = joblib.load(df_path)
+#db = Database()
+#db.reset_all()
+#db.create_tables()
+#db.populate()
+#cur = db.conn.cursor()

@@ -59,6 +59,8 @@ class IndeedProcessor:
         print(f"Loaded {path}")
         sel = pd.read_csv(path)
         sel['source'] = 'kaggle_1'
+        #mark the offers as english
+        sel['tag_language'] = 'en'
         
         cols = {'position': 'job_title',
                 'description': 'job_text'

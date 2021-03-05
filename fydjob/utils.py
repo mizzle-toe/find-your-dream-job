@@ -19,6 +19,9 @@ import pandas as pd
 
 home_path = os.path.dirname(fydjob.__file__)
 
+def join_strings(text):
+    return ' '.join(text)
+
 def keep_letters(word):
     '''Removes all chars that are not letters.'''
     return ''.join([char for char in word
