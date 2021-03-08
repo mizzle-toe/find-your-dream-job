@@ -13,6 +13,21 @@ import fydjob.utils as utils
 from fydjob.utils import tokenize_text_field
 ```
 
+# Pipeline
+
+The **long pipeline** (which will be supported by our package) works like this: 
+
+1.  `IndeedScraper`. Scrape jobs from Indeed.
+2. `IndeedProcessor`. Load scraped jobs and Kaggle data. Integrate, remove job offers with identical text, and export as a dataframe.
+3. `Database`. Populate the SQLLite database. Ensure not to add duplicates. 
+4. `Database`. Do a whole pass through the database, removing duplicates according to our set similarity measure (long process, up to 30 minutes). 
+5. `NLPFrame`. Export database to dataframe (`ndf`), add NLP processing columns (such as tokenized fields). 
+6. Apply NLP algorithms to dataframe, export results. 
+
+The **short pipeline** will start with stages 5-6. We will deploy our current database to the backend and stages 5-6 will be done on the server. 
+
+Upon scraping new job offers, they should be processed, inserted into the database, and a new similarity sweep should be executed. 
+
 # Indeed Scraper
 
 Scrapes job offers. To use it, download `chromedriver` from the Google Drive folders and place it in `drivers/`. 

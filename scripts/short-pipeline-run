@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Mar  8 11:58:50 2021
+
+@author: vlud
+"""
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from fydjob.Pipeline import Pipeline
+
+def main():
+    p = Pipeline()
+    p.short_pipeline()
+
+if __name__ == "__main__":
+    main()
