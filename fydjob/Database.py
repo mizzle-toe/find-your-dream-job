@@ -23,6 +23,7 @@ class Database:
         folder = os.path.join(home_path, 'database')
         
         if not os.path.exists(folder):
+            print('Creating database at', folder)
             os.mkdir(folder)
         
         self.db_path = os.path.join(folder, 'jobs.db')
@@ -65,6 +66,7 @@ class Database:
         '''
         
         conn = sqlite3.connect(self.db_path)
+        cur = conn.cursor()
         
         print("Populating database.")
         df = joblib.load(self.data_path)
@@ -74,7 +76,6 @@ class Database:
             df = df[:limit]
         
         df = df[df.tag_language == 'en']
-        cur = conn.cursor()
         
         for i, row in df.iterrows():
             #reorder row! some columns seem to be scrambled in the db
@@ -119,20 +120,30 @@ class Database:
     def to_frame(self):
         '''Loads the database as a Pandas dataframe.'''
         conn = sqlite3.connect(self.db_path)
+        print(f"Loading database from {self.db_path} as dataframe.")
         df = pd.read_sql_query("SELECT * FROM jobads", conn)
         conn.close()
         return df
     
     def export_csv(self, path):
         '''Exports the database as CSV.'''
-        self.to_frame().to_csv(path)
-                   
+        self.to_frame().to_csv(path) 
         
-df_path = os.path.join(home_path, 'output', 'indeed_proc', 'processed_data.joblib')
-df = joblib.load(df_path)
-db = Database()
-db.reset_all()
-db.create_tables()
-db.populate(limit=None)
-conn = sqlite3.connect(db.db_path)
-cur = conn.cursor()
+    def remove_sims_duplicates(self):
+        print('Removing duplicates on similarity measure...')
+        sdi_path = os.path.join(home_path, 'output', 'sims_duplicates_ids.joblib') 
+        if not os.path.exists(sdi_path):
+            print('Sims duplicates file not found. Skipping.')
+            return
+        
+        job_ids_to_remove = joblib.load(sdi_path)
+        conn = sqlite3.connect(self.db_path) 
+        cur = conn.cursor() 
+            
+        for id_ in job_ids_to_remove:
+            sql = '''DELETE FROM jobads WHERE job_id=?'''
+            cur.execute(sql, [id_])
+            print('Deleted id', id_)
+        
+        print("Similarity sweep completed")
+        conn.close()

@@ -22,3 +22,39 @@ Structuring the entire data pipeline.
 
 """
 
+from fydjob import IndeedProcessor, Database, NLPFrame
+
+class Pipeline:
+    
+     def __init__(self):
+         ...
+         
+     def long_pipeline(self):
+         '''Performs the full pipeline (see readme).'''
+         #Process Indeed scrapings and Kaggle data.
+         ip = IndeedProcessor()
+         ip.pipe()
+         ip.export()
+         
+         #create and populate database
+         db = Database()
+         db.create_tables()
+         db.populate(limit=None)
+         
+         #load dataframe from database 
+         ndf = NLPFrame() 
+         
+         #similarity sweep
+         ndf.get_duplicates()
+         db.remove_sims_duplicates()
+         ndf.reset_data()
+         
+         #add NLP fields
+         ndf.add_token_fields()
+         ndf.process_text()
+         
+     def short_pipeline(self):
+        '''Short pipeline starting from database (see readme).'''
+        ndf = NLPFrame()
+        ndf.add_token_fields()
+        ndf.process_text() 

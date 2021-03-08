@@ -107,7 +107,7 @@ def save_skills():
         json.dump(skills, file)
     print(f"Skills dictionary saved at {json_path}.")
     
-def load_skills():
+def load_skills(remove_duplicates=True):
     '''Loads skills from JSON file.'''
     json_path = os.path.join(home_path, 'data', 'dicts', 'skills_dict.json')
     if not os.path.exists(json_path):
@@ -115,6 +115,17 @@ def load_skills():
         return
     with open(json_path) as file:
         skills = json.load(file)
+        
+    if remove_duplicates:
+        flat = []
+        for cat, vals in skills.items():
+            for val in vals:
+                flat.append((cat, val))
+        flat = list(set(flat))
+        skills_unique = {cat: [] for cat in skills}
+        for cat, skill in flat:
+            skills_unique[cat].append(skill)
+        skills = skills_unique
     return skills
 
 def question_marks(size, before = [], after =[]):
@@ -132,7 +143,11 @@ def get_similarities(text, text_vector, keep_perfect=True):
     '''
     similarities = []
     for i, t in enumerate(text_vector):
-        sim = len(set(text) & set(t)) / (len(set(text)) + len(set(t))) * 2
+        #try/except to catch division by zero
+        try:
+            sim = len(set(text) & set(t)) / (len(set(text)) + len(set(t))) * 2
+        except:
+            sim = 0
         similarities.append((i, sim))
     similarities = sorted(similarities, key=lambda x: x[1], reverse=True)
     return similarities 

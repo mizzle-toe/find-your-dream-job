@@ -4,43 +4,51 @@
 Created on Fri Mar  5 12:56:56 2021
 
 @author: vlud
+
+TODO: Add feature with skills list & code keywords search
+
 """
 import os
 import fydjob
 from fydjob.Database import Database
 import fydjob.utils as utils
 import joblib
-from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 
 home_path = os.path.dirname(fydjob.__file__)
 
 class NLPFrame:
     def __init__(self):
         self.joblib_path = os.path.join(home_path, 'output', 'nlp_frame.joblib')
-        
-        self.dbow_path = os.path.join(home_path, 'output', 'models', 'model_dbow.joblib')
-        #self.dbow = self.load_dbow()
-        
+        self.df = None
+        self.load_data() 
+            
+    def load_data(self):
+        '''Loads data from joblib file, and if absent loads it from database
+        and creates the joblib file.
+        '''
         if os.path.exists(self.joblib_path):
-            self.df = joblib.load(self.joblib_path)
-            print("Loaded from", self.joblib_path)
+            self._load_from_joblib() 
         else:
-            self.df = self.load_from_db()
-            print("Loaded from db.")
-            self.save_joblib()
+            self._load_from_db()
         
-    def load_from_db(self):
+    def _load_from_db(self):
         db = Database()
-        return db.to_frame()
+        self.df = db.to_frame()
+        self.save_joblib()
+        print("Loaded from db.")
     
-    def load_dbow(self):
-        if os.path.exists(self.dbow_path):
-            return joblib.load(self.dbow_path)
-        return
+    def _load_from_joblib(self):
+        self.df = joblib.load(self.joblib_path)
+        print("Loaded from", self.joblib_path)
     
     def save_joblib(self):
         joblib.dump(self.df, self.joblib_path)
         print(f"Saved at {self.joblib_path}")
+        
+    def reset_data(self):
+        '''Removes the joblib file and reloads the data.'''
+        os.remove(self.joblib_path)
+        self.load_data()
 
     def add_token_fields(self, force=False):
         '''Adds columns with tokens.'''
@@ -75,13 +83,29 @@ class NLPFrame:
         '''Identifies duplicates according to the 'shared unique tokens' similarity score.
         Returns a list of job ids that can be passed to the database for deletion.
         TODO: Exclude Kaggle. 
-        '''
-        indexes_to_remove = []
+        ''' 
+        print('Extracting duplicates list with similarity measure.')
+        
+        indexes_to_remove_path = os.path.join(home_path, 'output', 'duplicates_indexes.joblib')
+        
+        if not os.path.exists(indexes_to_remove_path):
+            joblib.dump([], indexes_to_remove_path)
+        
+        indexes_to_remove = joblib.load(indexes_to_remove_path)
+        
         col = self.df[field]
         df = self.df.copy()
-        df = df.reset_index()
+        
+        c = 50
         
         for index, row in df.iterrows():
+            c -= 1
+            
+            if not c:
+                print('Saving indexes...')
+                joblib.dump(indexes_to_remove, indexes_to_remove_path)
+                c = 50
+            
             if index not in indexes_to_remove:
                 text = row[field]
                 sims = utils.get_similarities(text, col)
@@ -89,41 +113,22 @@ class NLPFrame:
                            if sim[0] != index
                            and sim[1] >= threshold] 
                 indexes_to_remove += indexes
+                #prevent duplicates
+                indexes_to_remove = list(set(indexes_to_remove))
                 print(index, indexes)
                 
         job_ids_to_remove = list(df.loc[indexes_to_remove]['job_id'])
-        return job_ids_to_remove
+        
+        #exporting
+        sdi_path = os.path.join(home_path, 'output', 'sims_duplicates_ids.joblib') 
+        joblib.dump(job_ids_to_remove, sdi_path)
+        print("Saved duplicate IDs at", sdi_path)
         
             
-    def train_dbow(self, field='job_text_tokenized_processed'):
-        '''Trains the model for doc2vec similarity.'''
-        print("Training dbow model...")
-        texts = self.df[field]
-        texts_tagged = [TaggedDocument(text, tags=['tag_'+str(tag)]) for tag, text in enumerate(texts)]
-        # build vocabulary with CBOW (dm=0) - instanciate model
-        model_dbow = Doc2Vec(documents=texts_tagged,
-                     dm=0,
-                     alpha=0.025,
-                     vector_size=len(texts_tagged), 
-                     min_count=1)
-        
-        # train the model
-        model_dbow.train(texts_tagged, total_examples=model_dbow.corpus_count, epochs=1)
-        joblib.dump(model_dbow, self.dbow_path)
-        print(f"Saved model at {self.dbow_path}")
-        self.load_dbow()
-        
-    def find_similar_jobs(self, tokenized_job):
-        # infer vector from text
-        infer_vector = self.dbow.infer_vector(tokenized_job)
-        # finds similar texts
-        similar_documents = self.dbow.docvecs.most_similar([infer_vector], topn = 30)
-        return similar_documents
-        
-ndf = NLPFrame()
+ndf = NLPFrame() 
+#ndf.add_token_fields()
+#ndf.process_text()
 #job_ids_to_drop = ndf.get_duplicates()
 #joblib.drop(job_ids_to_drop, 'output/job_ids_to_drop.joblib')
-
-
 #ndf.add_token_fields()
 #ndf.process_text()

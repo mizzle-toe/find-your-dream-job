@@ -40,7 +40,7 @@ class IndeedProcessor:
             except:
                 print("Warning. Coud not create folder {self.kaggle_folder}.")
                 
-    def get_jsons(self):
+    def _get_jsons(self):
         '''Retrieves JSON files and returns them in the form of dataframes.'''
         frames = []
         for filepath in self.filepaths:
@@ -53,7 +53,7 @@ class IndeedProcessor:
                 print(f'Loaded {filepath}')
         return frames
     
-    def get_kaggle1(self, filename='data_scientist_job_market_in_the_us.csv'):
+    def _get_kaggle1(self, filename='data_scientist_job_market_in_the_us.csv'):
         '''Retrieves Kaggle dataframe and homologates the data.'''
         path = os.path.join(self.kaggle_folder, filename)
         print(f"Loaded {path}")
@@ -77,8 +77,8 @@ class IndeedProcessor:
         print('Preprocessing...')
         df = pd.DataFrame()
         
-        frames = self.get_jsons()
-        kaggle = self.get_kaggle1()
+        frames = self._get_jsons()
+        kaggle = self._get_kaggle1()
         
         for frame in frames:
             df = df.append(frame)
