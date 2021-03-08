@@ -98,9 +98,9 @@ def save_skills():
     path = os.path.join(home_path, 'data', 'dicts', 'skills_dict.xlsx')
     json_path = os.path.join(home_path, 'data', 'dicts', 'skills_dict.json')
     skill_names = ['business', 'knowledge', 'programming', 
-                   'soft_skills', 'tech_adjectives']
+                   'soft_skills']
     skills = {skill: None for skill in skill_names}
-    for sheet in range(5):
+    for sheet in range(4):
         l = list(pd.read_excel(path, sheet_name=sheet).iloc[:, 0])
         skills[skill_names[sheet]] = l
     with open(json_path, 'w') as file:
