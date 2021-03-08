@@ -10,28 +10,20 @@ selenium
 # data science
 numpy
 pandas
+matplotlib
 scikit-learn
 openpyxl
 
-# tests/linter
-black
-coverage
-flake8
-pytest
-yapf
-
 # API
-gcsfs
-google-cloud-storage
-mlflow
-s3fs
+fastapi
 
 # utilities
-six>=1.14
 joblib
-memoized-property
-termcolor
 
 # NLP
 nltk
 langdetect
+
+#frontend
+streamlit
+altair

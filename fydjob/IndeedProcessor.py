@@ -40,7 +40,7 @@ class IndeedProcessor:
             except:
                 print("Warning. Coud not create folder {self.kaggle_folder}.")
                 
-    def get_jsons(self):
+    def _get_jsons(self):
         '''Retrieves JSON files and returns them in the form of dataframes.'''
         frames = []
         for filepath in self.filepaths:
@@ -53,12 +53,14 @@ class IndeedProcessor:
                 print(f'Loaded {filepath}')
         return frames
     
-    def get_kaggle1(self, filename='data_scientist_job_market_in_the_us.csv'):
+    def _get_kaggle1(self, filename='data_scientist_job_market_in_the_us.csv'):
         '''Retrieves Kaggle dataframe and homologates the data.'''
         path = os.path.join(self.kaggle_folder, filename)
         print(f"Loaded {path}")
         sel = pd.read_csv(path)
         sel['source'] = 'kaggle_1'
+        #mark the offers as english
+        sel['tag_language'] = 'en'
         
         cols = {'position': 'job_title',
                 'description': 'job_text'
@@ -75,8 +77,8 @@ class IndeedProcessor:
         print('Preprocessing...')
         df = pd.DataFrame()
         
-        frames = self.get_jsons()
-        kaggle = self.get_kaggle1()
+        frames = self._get_jsons()
+        kaggle = self._get_kaggle1()
         
         for frame in frames:
             df = df.append(frame)
@@ -96,11 +98,6 @@ class IndeedProcessor:
         
         df['location'] = df.location.apply(utils.keep_letters)
         
-        df['job_info_tokenized'] = tokenize_text_field(df['job_info'])
-        df['job_text_tokenized'] = tokenize_text_field(df['job_text'])
-        df['job_text_tokenized_titlecase'] = tokenize_text_field(df['job_text'], to_lowercase=False)
-        df['job_title_tokenized'] = tokenize_text_field(df['job_title']) 
-
         self.df_output = df
         print('Preprocessing completed.')
         

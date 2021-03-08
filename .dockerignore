@@ -1,0 +1,15 @@
+data-sourcing
+
+fydjob/output
+fydjob/.ipynb_checkpoints
+fydjob/__pycache__
+fydjob/discarded.py
+
+indeed-preproc
+notebooks
+raw_data
+.git
+.github
+
+Dockerfile
+.gitignore
