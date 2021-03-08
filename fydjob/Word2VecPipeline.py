@@ -1,16 +1,22 @@
 
+from gensim.models import Word2Vec
+import json
 
 class WordPipeline:
 
-    def __init__(self):
+    def __init__(self,path = None):
 
-        self.w2v_model = Word2Vec(min_count=20,
-                         window=2,
-                         size=20,
-                         sample=6e-5,
-                         alpha=0.03,
-                         min_alpha=0.0007,
-                         negative=20,
+        if path:
+            self.w2v_model = Word2Vec.load(path)
+        else:
+
+            self.w2v_model = Word2Vec(min_count=20,
+                             window=2,
+                             size=20,
+                             sample=6e-5,
+                             alpha=0.03,
+                             min_alpha=0.0007,
+                             negative=20,
                         )
 
     def build_vocab(self,df):
@@ -25,17 +31,19 @@ class WordPipeline:
 
         return self.w2v_model.wv.most_similar(query, topn =topn)
 
+
     def most_similar_skills(self,query,n_recommendations):
 
-        self.dictionary = json.load("/data/dicts/skills_dict.json")
+        with open("../fydjob/data/dicts/skills_dict.json") as json_file:
+            self.dictionary = json.load(json_file)
 
         term_list = []
-        for cat in dictionary.keys():
-            for word in dictionary[cat]:
+        for cat in self.dictionary.keys():
+            for word in self.dictionary[cat]:
                 term_list.append(word)
 
         try:
-            model_skills = self.most_similar(query)
+            model_skills = self.most_similar(query.lower())
             skill_words = []
             for i in range(len(model_skills)):
                 skill_words.append(model_skills[i][0])
