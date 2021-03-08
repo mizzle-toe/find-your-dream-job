@@ -19,6 +19,9 @@ import pandas as pd
 
 home_path = os.path.dirname(fydjob.__file__)
 
+def join_strings(text):
+    return ' '.join(text)
+
 def keep_letters(word):
     '''Removes all chars that are not letters.'''
     return ''.join([char for char in word
@@ -45,10 +48,15 @@ def tag_language(text):
 
 def remove_stopwords(text):
     '''Remove basic stopwords.'''
+
     stop_words = set(stopwords.words('english'))
     word_tokens = word_tokenize(text)
     text = [w for w in word_tokens if not w in stop_words]
     return text
+
+    stop_words = set(stopwords.words('english'))
+    return [w for w in text if not w in stop_words]
+
 
 def lemmatize_words(text):
     '''Lemmatize words.'''
@@ -96,17 +104,26 @@ def save_skills():
     '''Converts Excel skills file into JSON.'''
     path = os.path.join(home_path, 'data', 'dicts', 'skills_dict.xlsx')
     json_path = os.path.join(home_path, 'data', 'dicts', 'skills_dict.json')
+
     skill_names = ['business', 'knowledge', 'programming',
                    'soft_skills', 'tech_adjectives']
+
+    skill_names = ['business', 'knowledge', 'programming',
+                   'soft_skills']
+
     skills = {skill: None for skill in skill_names}
-    for sheet in range(5):
+    for sheet in range(4):
         l = list(pd.read_excel(path, sheet_name=sheet).iloc[:, 0])
         skills[skill_names[sheet]] = l
     with open(json_path, 'w') as file:
         json.dump(skills, file)
     print(f"Skills dictionary saved at {json_path}.")
 
-def load_skills():
+
+
+
+def load_skills(remove_duplicates=True):
+
     '''Loads skills from JSON file.'''
     json_path = os.path.join(home_path, 'data', 'dicts', 'skills_dict.json')
     if not os.path.exists(json_path):
@@ -114,6 +131,17 @@ def load_skills():
         return
     with open(json_path) as file:
         skills = json.load(file)
+
+    if remove_duplicates:
+        flat = []
+        for cat, vals in skills.items():
+            for val in vals:
+                flat.append((cat, val))
+        flat = list(set(flat))
+        skills_unique = {cat: [] for cat in skills}
+        for cat, skill in flat:
+            skills_unique[cat].append(skill)
+        skills = skills_unique
     return skills
 
 def question_marks(size, before = [], after =[]):
@@ -122,6 +150,7 @@ def question_marks(size, before = [], after =[]):
     '''
     lst = [str(x) for x in before] + ['?']*size + [str(x) for x in after]
     return ','.join(lst)
+
 
 def category_tagger(series):
          '''
@@ -138,3 +167,21 @@ def category_tagger(series):
                 return (i,"soft_skills")
             if i in tech_adjectives_dict:
                 return (i,"tech_adjectives")
+
+def get_similarities(text, text_vector, keep_perfect=True):
+    '''Returns a list of similarity scores between a text and all texts in a text vector.
+    Similarity a value between 0 and 1 that shows the proportion of shared unique
+    tokens between the texts.
+    If keep_perfect is false, it will not return perfect similarities of 1.
+    '''
+    similarities = []
+    for i, t in enumerate(text_vector):
+        #try/except to catch division by zero
+        try:
+            sim = len(set(text) & set(t)) / (len(set(text)) + len(set(t))) * 2
+        except:
+            sim = 0
+        similarities.append((i, sim))
+    similarities = sorted(similarities, key=lambda x: x[1], reverse=True)
+    return similarities
+
