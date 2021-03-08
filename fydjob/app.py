@@ -25,17 +25,16 @@ jd = st.sidebar.text_input('Job Description', 'Data Scientist')
 regex_jd = '^'+jd
 city = st.sidebar.text_input('City', 'Berlin')
 comp = st.sidebar.text_input('Company')
-skill = st.sidebar.text_input('Skill','python')
-
+# use a regular expression for filtering the df, as Data Scientist (m/w/x) would be filtered out
+regex_comp = '^'+comp
 #Button: if button is clicked, jump to next page and show exploratory view
 if st.sidebar.button('Analyze'):
     # filter data based on job input
-    data = data.loc[data.job_title.str.contains(regex_jd)]
-    #search for skill
-    word = [skill]
-    
+    data = data.loc[data.job_title.str.contains(regex_jd)]  
     # filter data based on city input  only if we get the city
 
+    # filter data based on job input
+    data = data.loc[data.job_title.str.contains(regex_comp)]
 # switch between pages by using Radio Button
 #st.sidebar.radio('View Page', ['Overview','Job Offers'])
 
@@ -175,18 +174,24 @@ df_categ = df_bus.append(df_know).append(df_code).append(df_soft)
 
 @st.cache(allow_output_mutation=True)
 def get_skills(df_categ):
-    source = df_categ.nlargest(100, 'count')
+    #source = df_categ
+    source = df_categ.nlargest(50, 'count')
     categs = np.array(df_categ['category'].unique())
     category = np.insert(categs, 0, 'all')
     #Dropdownbox
     input_dropdown = alt.binding_select(options = category)
-    selection = alt.selection_single(fields = ['category'], bind = input_dropdown, name= 'Professional ')
+    selection = alt.selection_single(fields = ['category'], bind = input_dropdown, name= 'Skill ')
 
     c_skills= alt.Chart(source).mark_bar().encode(
     x = ('count:Q'),
-    y = alt.Y('skill',sort='-x'),
-    ).add_selection(selection).transform_filter(
-        selection)
+    #i tried getting the top N to work here, so we wouldn't have to filter on top n in the source df
+    # y = alt.Y('skill',sort='-x'),
+    #     ).add_selection(selection).transform_window(
+    #         rank='rank(count)',
+    #         sort=[alt.SortField('count', order='descending')]
+    #         ).transform_filter((selection) & (alt.datum.rank < 10))
+    y = alt.Y('skill',sort='-x')).add_selection(selection).transform_filter(selection)
+       
     return c_skills
 c_skills = get_skills(df_categ)
 st.write(c_skills)
@@ -194,13 +199,16 @@ st.write(c_skills)
 
 
 #Detail page
-
 w2v_model = Word2Vec.load("../fydjob/data/models/w2v_model_baseline.model")
-word = [skill]
+#search for skill
 st.markdown("""
-### Find the clostest skills for:""")
-st.write(skill)
+### Find the closest skills for:""")
+skill = st.text_input('Skill','python')
+word = [skill]
+#st.write(skill)
 df_words= pd.DataFrame(w2v_model.wv.most_similar(word), columns=['Similar word', 'distance']) # works with single words
 #table
 st.table(df_words)
 
+# list of job offers
+st.table(data)
