@@ -11,7 +11,7 @@ import os
 import json
 import string
 from langdetect import detect
-from nltk.corpus import stopwords 
+from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 import numpy as np
@@ -45,9 +45,9 @@ def tag_language(text):
 
 def remove_stopwords(text):
     '''Remove basic stopwords.'''
-    stop_words = set(stopwords.words('english')) 
-    word_tokens = word_tokenize(text) 
-    text = [w for w in word_tokens if not w in stop_words] 
+    stop_words = set(stopwords.words('english'))
+    word_tokens = word_tokenize(text)
+    text = [w for w in word_tokens if not w in stop_words]
     return text
 
 def lemmatize_words(text):
@@ -64,10 +64,10 @@ def tokenize_text_field(series, to_lowercase=True):
                    .str.strip()\
                    .apply(remove_newline)\
                    .apply(clean_text)
-    
+
     if to_lowercase:
         series = series.str.lower()
-    
+
     series = series.apply(word_tokenize)
     return series
 
@@ -88,7 +88,7 @@ def compose_url(base, params):
     '''Build URL from base (String) and params (dict).'''
     params_strings = []
     for key, val in params.items():
-        params_strings.append(f"{key}={val}") 
+        params_strings.append(f"{key}={val}")
     params_string = '&'.join(params_strings)
     return base + '?' + params_string
 
@@ -96,7 +96,7 @@ def save_skills():
     '''Converts Excel skills file into JSON.'''
     path = os.path.join(home_path, 'data', 'dicts', 'skills_dict.xlsx')
     json_path = os.path.join(home_path, 'data', 'dicts', 'skills_dict.json')
-    skill_names = ['business', 'knowledge', 'programming', 
+    skill_names = ['business', 'knowledge', 'programming',
                    'soft_skills', 'tech_adjectives']
     skills = {skill: None for skill in skill_names}
     for sheet in range(5):
@@ -105,7 +105,7 @@ def save_skills():
     with open(json_path, 'w') as file:
         json.dump(skills, file)
     print(f"Skills dictionary saved at {json_path}.")
-    
+
 def load_skills():
     '''Loads skills from JSON file.'''
     json_path = os.path.join(home_path, 'data', 'dicts', 'skills_dict.json')
@@ -122,3 +122,19 @@ def question_marks(size, before = [], after =[]):
     '''
     lst = [str(x) for x in before] + ['?']*size + [str(x) for x in after]
     return ','.join(lst)
+
+def category_tagger(series):
+         '''
+        This function assigns the respective category to the recommended list
+        '''
+        for i in series:
+            if i in business_dict:
+                return (i,"business")
+            if i in knowledge_dict:
+                return (i,"knowledge")
+            if i in programming_dict:
+                return (i,"programming")
+            if i in soft_skills_dict:
+                return (i,"soft_skills")
+            if i in tech_adjectives_dict:
+                return (i,"tech_adjectives")
