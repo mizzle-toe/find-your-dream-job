@@ -13,7 +13,8 @@ import fydjob.utils as utils
 from fydjob.utils import tokenize_text_field
 import joblib
 
-home_path = os.path.dirname(fydjob.__file__)
+home_path = os.path.dirname(fydjob.__file__) 
+
 
 class IndeedProcessor:
     '''Process Indeed job posting files and output one dataframe.'''
@@ -39,6 +40,9 @@ class IndeedProcessor:
                 os.mkdir(self.kaggle_folder)
             except:
                 print("Warning. Coud not create folder {self.kaggle_folder}.")
+                
+    def cwd(self):
+        print('os.get_cwd():', os.get_cwd())
                 
     def _get_jsons(self):
         '''Retrieves JSON files and returns them in the form of dataframes.'''
