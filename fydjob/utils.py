@@ -11,7 +11,7 @@ import os
 import json
 import string
 from langdetect import detect
-from nltk.corpus import stopwords 
+from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 import numpy as np
@@ -48,8 +48,15 @@ def tag_language(text):
 
 def remove_stopwords(text):
     '''Remove basic stopwords.'''
-    stop_words = set(stopwords.words('english')) 
-    return [w for w in text if not w in stop_words] 
+
+    stop_words = set(stopwords.words('english'))
+    word_tokens = word_tokenize(text)
+    text = [w for w in word_tokens if not w in stop_words]
+    return text
+
+    stop_words = set(stopwords.words('english'))
+    return [w for w in text if not w in stop_words]
+
 
 def lemmatize_words(text):
     '''Lemmatize words.'''
@@ -65,10 +72,10 @@ def tokenize_text_field(series, to_lowercase=True):
                    .str.strip()\
                    .apply(remove_newline)\
                    .apply(clean_text)
-    
+
     if to_lowercase:
         series = series.str.lower()
-    
+
     series = series.apply(word_tokenize)
     return series
 
@@ -89,7 +96,7 @@ def compose_url(base, params):
     '''Build URL from base (String) and params (dict).'''
     params_strings = []
     for key, val in params.items():
-        params_strings.append(f"{key}={val}") 
+        params_strings.append(f"{key}={val}")
     params_string = '&'.join(params_strings)
     return base + '?' + params_string
 
@@ -97,8 +104,13 @@ def save_skills():
     '''Converts Excel skills file into JSON.'''
     path = os.path.join(home_path, 'data', 'dicts', 'skills_dict.xlsx')
     json_path = os.path.join(home_path, 'data', 'dicts', 'skills_dict.json')
-    skill_names = ['business', 'knowledge', 'programming', 
+
+    skill_names = ['business', 'knowledge', 'programming',
+                   'soft_skills', 'tech_adjectives']
+
+    skill_names = ['business', 'knowledge', 'programming',
                    'soft_skills']
+
     skills = {skill: None for skill in skill_names}
     for sheet in range(4):
         l = list(pd.read_excel(path, sheet_name=sheet).iloc[:, 0])
@@ -106,8 +118,12 @@ def save_skills():
     with open(json_path, 'w') as file:
         json.dump(skills, file)
     print(f"Skills dictionary saved at {json_path}.")
-    
+
+
+
+
 def load_skills(remove_duplicates=True):
+
     '''Loads skills from JSON file.'''
     json_path = os.path.join(home_path, 'data', 'dicts', 'skills_dict.json')
     if not os.path.exists(json_path):
@@ -115,7 +131,7 @@ def load_skills(remove_duplicates=True):
         return
     with open(json_path) as file:
         skills = json.load(file)
-        
+
     if remove_duplicates:
         flat = []
         for cat, vals in skills.items():
@@ -135,11 +151,28 @@ def question_marks(size, before = [], after =[]):
     lst = [str(x) for x in before] + ['?']*size + [str(x) for x in after]
     return ','.join(lst)
 
+
+def category_tagger(series):
+         '''
+        This function assigns the respective category to the recommended list
+        '''
+        for i in series:
+            if i in business_dict:
+                return (i,"business")
+            if i in knowledge_dict:
+                return (i,"knowledge")
+            if i in programming_dict:
+                return (i,"programming")
+            if i in soft_skills_dict:
+                return (i,"soft_skills")
+            if i in tech_adjectives_dict:
+                return (i,"tech_adjectives")
+
 def get_similarities(text, text_vector, keep_perfect=True):
     '''Returns a list of similarity scores between a text and all texts in a text vector.
-    Similarity a value between 0 and 1 that shows the proportion of shared unique 
-    tokens between the texts. 
-    If keep_perfect is false, it will not return perfect similarities of 1. 
+    Similarity a value between 0 and 1 that shows the proportion of shared unique
+    tokens between the texts.
+    If keep_perfect is false, it will not return perfect similarities of 1.
     '''
     similarities = []
     for i, t in enumerate(text_vector):
@@ -150,4 +183,5 @@ def get_similarities(text, text_vector, keep_perfect=True):
             sim = 0
         similarities.append((i, sim))
     similarities = sorted(similarities, key=lambda x: x[1], reverse=True)
-    return similarities 
+    return similarities
+
