@@ -8,6 +8,7 @@ Created on Thu Mar  4 16:41:31 2021
 import os
 import sqlite3
 import fydjob
+import numpy as np
 import pandas as pd
 import joblib
 from fydjob.utils import question_marks
@@ -53,7 +54,10 @@ class Database:
                           
     def reset_all(self):
         '''Deletes the database and creates it again. Data and schema will be lost.'''
-        os.remove(self.db_path)
+        if os.path.exists(self.db_path):    
+            os.remove(self.db_path)
+        else:
+            print("No DB found.")
         
     def populate(self, limit=None):
         '''Populates the database. 
@@ -74,7 +78,7 @@ class Database:
         
         for i, row in df.iterrows():
             #reorder row! some columns seem to be scrambled in the db
-            row = row[list(df.columns)]
+            row = row[list(df.columns)].replace(np.nan, 'NULL')
             print(i)
             #check if text is already in db
             #sanitize quotation marks to avoid errors!
@@ -98,18 +102,16 @@ class Database:
             #q_marks = f"({'?,'*len(vals)}"[:-1] + ')'
             q_marks = question_marks(len(vals))
             sql = f'''INSERT INTO jobads(job_id, job_title, job_text, 
-                                        company, location, job_info, 
-                                        job_link, query_text, source, 
+                                        company, location, job_info,
+                                        query_text, source, job_link,
                                         tag_language, reviews)
                       VALUES ({q_marks})
                       '''
-            
             try:
                 cur.execute(sql, vals)
             except:
                 print("Failed to add job at index" + str(i))
                 continue
-        
         conn.commit()
         conn.close()
         print("Done populating database!")
@@ -126,11 +128,11 @@ class Database:
         self.to_frame().to_csv(path)
                    
         
-#df_path = os.path.join(home_path, 'output', 'indeed_proc', 'processed_data.joblib')
-#df = joblib.load(df_path)
-#db = Database()
-#db.reset_all()
-#db.create_tables()
-#db.populate()
-#conn = sqlite3.connect(db.db_path)
-#cur = conn.cursor()
+df_path = os.path.join(home_path, 'output', 'indeed_proc', 'processed_data.joblib')
+df = joblib.load(df_path)
+db = Database()
+db.reset_all()
+db.create_tables()
+db.populate(limit=None)
+conn = sqlite3.connect(db.db_path)
+cur = conn.cursor()

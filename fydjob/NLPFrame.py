@@ -100,7 +100,6 @@ class NLPFrame:
         print("Training dbow model...")
         texts = self.df[field]
         texts_tagged = [TaggedDocument(text, tags=['tag_'+str(tag)]) for tag, text in enumerate(texts)]
-        
         # build vocabulary with CBOW (dm=0) - instanciate model
         model_dbow = Doc2Vec(documents=texts_tagged,
                      dm=0,
