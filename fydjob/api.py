@@ -18,3 +18,4 @@ def index():
 @app.get('/skills')
 def skills():
     return {'skills': ['python', 'java', 'docker']}
+
