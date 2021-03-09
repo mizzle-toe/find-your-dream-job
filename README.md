@@ -13,6 +13,21 @@ import fydjob.utils as utils
 from fydjob.utils import tokenize_text_field
 ```
 
+# How to get the data locally (final version)
+
+1. Pull master and merge with your branch.
+2. Download jobs.db from `Google_Drive/database`.
+3. Place the file in `find-your-dream-job/fydjob/database`.
+4. `cd` in the main folder `find-your-dream-job`
+5. `python short-pipeline-run`
+
+To load the data:
+
+```python
+from fydjob.NLPFrame import NLPFrame
+df = NLPFrame().df
+```
+
 # Pipeline
 
 The **long pipeline** (which will be supported by our package) works like this: 
@@ -79,89 +94,3 @@ utils.load_skills()     #loads the skills from JSON file
 ```
 
 This is just the setup. If you haven't changed the pipeline, just run `utils.load_skills` to get the skills.
-
-
-
----
-
-### Boilerplate below
-
----
-
-
-
-# Data analysis
-
-- Document here the project: find-your-dream-job
-- Description: Project Description
-- Data Source:
-- Type of analysis:
-
-Please document the project the better you can.
-
-# Startup the project
-
-The initial setup.
-
-Create virtualenv and install the project:
-```bash
-sudo apt-get install virtualenv python-pip python-dev
-deactivate; virtualenv ~/venv ; source ~/venv/bin/activate ;\
-    pip install pip -U; pip install -r requirements.txt
-```
-
-Unittest test:
-```bash
-make clean install test
-```
-
-Check for find-your-dream-job in gitlab.com/{group}.
-If your project is not set please add it:
-
-- Create a new project on `gitlab.com/{group}/find-your-dream-job`
-- Then populate it:
-
-```bash
-##   e.g. if group is "{group}" and project_name is "find-your-dream-job"
-git remote add origin git@github.com:{group}/find-your-dream-job.git
-git push -u origin master
-git push -u origin --tags
-```
-
-Functional test with a script:
-
-```bash
-cd
-mkdir tmp
-cd tmp
-find-your-dream-job-run
-```
-
-# Install
-
-Go to `https://github.com/{group}/find-your-dream-job` to see the project, manage issues,
-setup you ssh public key, ...
-
-Create a python3 virtualenv and activate it:
-
-```bash
-sudo apt-get install virtualenv python-pip python-dev
-deactivate; virtualenv -ppython3 ~/venv ; source ~/venv/bin/activate
-```
-
-Clone the project and install it:
-
-```bash
-git clone git@github.com:{group}/find-your-dream-job.git
-cd find-your-dream-job
-pip install -r requirements.txt
-make clean install test                # install and test
-```
-Functionnal test with a script:
-
-```bash
-cd
-mkdir tmp
-cd tmp
-find-your-dream-job-run
-```

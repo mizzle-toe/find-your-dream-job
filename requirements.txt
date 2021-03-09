@@ -16,6 +16,7 @@ openpyxl
 
 # API
 fastapi
+uvicorn
 
 # utilities
 joblib
