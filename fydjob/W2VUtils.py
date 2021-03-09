@@ -10,14 +10,14 @@ def to_lower(text):
 
 
 def remove_number(text):
-    text = ''.join(word for word in text if not word.isdigit())
+    text = ''.join([word for word in text if not word.isdigit()])
 
     return text
 
 
 def remove_punctuation_mod(text):
 
-    punct = string.punctuation.replace(".","")
+    punct = string.punctuation.replace(".", "")
     for punctuation in punct:
         text = text.replace(punctuation, '')
 
