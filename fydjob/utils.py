@@ -46,17 +46,18 @@ def tag_language(text):
     ln = detect(text)
     return ln
 
-def remove_stopwords(text):
-    '''Remove basic stopwords.'''
-
+def remove_stopwords_string(text):
+    '''Remove basic stopwords on string text.'''
     stop_words = set(stopwords.words('english'))
     word_tokens = word_tokenize(text)
     text = [w for w in word_tokens if not w in stop_words]
     return text
 
+def remove_stopwords_list(tokens):
+    '''Remove basic stopwords on list of tokens.'''
     stop_words = set(stopwords.words('english'))
-    return [w for w in text if not w in stop_words]
-
+    text = [token for token in tokens if not token in stop_words]
+    return text
 
 def lemmatize_words(text):
     '''Lemmatize words.'''
@@ -120,8 +121,6 @@ def save_skills():
     print(f"Skills dictionary saved at {json_path}.")
 
 
-
-
 def load_skills(remove_duplicates=True):
 
     '''Loads skills from JSON file.'''
@@ -179,6 +178,8 @@ def category_tagger(series):
             return tagged_series
         except:
             return "Sorry,somthing went wrong"
+
+
 
 
 def get_similarities(text, text_vector, keep_perfect=True):
