@@ -13,7 +13,7 @@ import pandas as pd
 import joblib
 from fydjob.utils import question_marks
 
-home_path = os.path.dirname(fydjob.__file__)
+home_path = os.path.dirname(fydjob.__file__) 
 
 class Database:
     '''Manages connection to SQLITE db.'''
@@ -27,7 +27,11 @@ class Database:
             os.mkdir(folder)
         
         self.db_path = os.path.join(folder, 'jobs.db')
-        self.data_path = os.path.join(home_path, 'output', 'indeed_proc', 'processed_data.joblib')
+        self.data_path = os.path.join(home_path, 'output', 'indeed_proc', 'processed_data.joblib') 
+        
+    def print_paths(self):
+        print('os.getcwd()\n', os.getcwd())
+        print('os.path.dirname(fydjob.__file__)\n', os.path.dirname(fydjob.__file__))
         
     def create_tables(self):
         '''Creates main table to store job postings.'''

@@ -13,14 +13,21 @@ import fydjob
 from fydjob.Database import Database
 import fydjob.utils as utils
 import joblib
+import nltk
 
 home_path = os.path.dirname(fydjob.__file__)
 
 class NLPFrame:
     def __init__(self):
+        self.nltk_downloads()
         self.joblib_path = os.path.join(home_path, 'output', 'nlp_frame.joblib')
         self.df = None
         self.load_data() 
+        
+    def nltk_downloads(self):
+        nltk.download('punkt')
+        nltk.download('wordnet')
+        nltk.download('stopwords')
             
     def load_data(self):
         '''Loads data from joblib file, and if absent loads it from database
@@ -74,7 +81,7 @@ class NLPFrame:
         if force or colname not in self.df.columns:
             print("Processing", text_field)
             self.df[colname] = self.df[text_field].apply(utils.lemmatize_words)\
-                                                  .apply(utils.remove_stopwords)
+                                                  .apply(utils.remove_stopwords_list)
             self.save_joblib()
         else:
             print("Processed column already found.")

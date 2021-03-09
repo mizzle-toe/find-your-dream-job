@@ -46,17 +46,18 @@ def tag_language(text):
     ln = detect(text)
     return ln
 
-def remove_stopwords(text):
-    '''Remove basic stopwords.'''
-
+def remove_stopwords_string(text):
+    '''Remove basic stopwords on string text.'''
     stop_words = set(stopwords.words('english'))
     word_tokens = word_tokenize(text)
     text = [w for w in word_tokens if not w in stop_words]
     return text
 
+def remove_stopwords_list(tokens):
+    '''Remove basic stopwords on list of tokens.'''
     stop_words = set(stopwords.words('english'))
-    return [w for w in text if not w in stop_words]
-
+    text = [token for token in tokens if not token in stop_words]
+    return text
 
 def lemmatize_words(text):
     '''Lemmatize words.'''
@@ -120,8 +121,6 @@ def save_skills():
     print(f"Skills dictionary saved at {json_path}.")
 
 
-
-
 def load_skills(remove_duplicates=True):
 
     '''Loads skills from JSON file.'''
@@ -152,21 +151,36 @@ def question_marks(size, before = [], after =[]):
     return ','.join(lst)
 
 
-# def category_tagger(series):
-#     '''
-#     This function assigns the respective category to the recommended list
-#     '''
-#     for i in series:
-#         if i in business_dict:
-#             return (i,"business")
-#         if i in knowledge_dict:
-#             return (i,"knowledge")
-#         if i in programming_dict:
-#             return (i,"programming")
-#         if i in soft_skills_dict:
-#             return (i,"soft_skills")
-#         if i in tech_adjectives_dict:
-#             return (i,"tech_adjectives")
+def category_tagger(series):
+        '''
+        This function assigns the respective category to the recommended list
+        '''
+        with open(os.path.join(home_path,"data","dicts","skills_dict.json")) as json_file:
+            dictionary= json.load(json_file)
+
+            business_dict = dictionary["business"]
+            knowledge_dict = dictionary["knowledge"]
+            programming_dict = dictionary["programming"]
+            soft_skills_dict = dictionary["soft_skills"]
+
+        try:
+            tagged_series = []
+            for i in series:
+                if i in business_dict:
+                    tagged_series.append((i,"business"))
+                if i in knowledge_dict:
+                    tagged_series.append((i,"knowledge"))
+                if i in programming_dict:
+                    tagged_series.append((i,"programming"))
+                if i in soft_skills_dict:
+                    tagged_series.append((i,"soft_skills"))
+
+            return tagged_series
+        except:
+            return "Sorry,somthing went wrong"
+
+
+
 
 def get_similarities(text, text_vector, keep_perfect=True):
     '''Returns a list of similarity scores between a text and all texts in a text vector.
