@@ -17,7 +17,7 @@ def app():
     #response.json()
 
     #sidebar 
-    skills = st.sidebar.text_input('Search skill','python')
+    skills = st.sidebar.text_input('Search skill','python').title()
     #word = [skills.split(',')]
     no_skill = st.sidebar.number_input('n-closest skills',5)
     
@@ -30,6 +30,7 @@ def app():
     w2v_model = WordPipeline("/Users/jasminkazi/code/mizzle-toe/find-your-dream-job/fydjob/data/models/w2v_model_baseline.model")
     #df_words= pd.DataFrame(w2v_model.most_similar_skills(skills,n_recommendations= no_skill),columns=['List of similar words']).assign(hack='').set_index('hack')
     df_words = pd.DataFrame(category_tagger(w2v_model.most_similar_skills(skills,n_recommendations= no_skill)),columns=['List of similar words','Skill category']).assign(hack='').set_index('hack')
+    df_words['List of similar words'] = df_words['List of similar words'].apply(lambda x: x.title())
 
     #table
     st.write(df_words)

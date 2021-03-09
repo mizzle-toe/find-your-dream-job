@@ -19,9 +19,7 @@ def app():
 
     #local data
     data = NLPFrame().df
-    #data = joblib.load('/Users/jasminkazi/code/mizzle-toe/find-your-dream-job/fydjob/output/indeed_proc/processed_data.joblib')
-    data = data.drop(columns=['job_info_tokenized','job_text_tokenized_titlecase', 'job_title_tokenized','job_text_tokenized'])
-    #data = data.sample(n=2000)
+    data = data.drop(columns=['job_info_tokenized','job_text_tokenized_titlecase','job_text_tokenized'])
 
     #Sidebar
     # Title
@@ -49,7 +47,7 @@ def app():
     
 
     # Numerical KPIs
-    no_jd = str(data['job_title'].count())
+    no_jd = str(data['job_id'].count())
     st.markdown("""
     ### Number of available jobs:""")
     st.write(no_jd)
