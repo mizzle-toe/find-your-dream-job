@@ -6,12 +6,22 @@ import matplotlib.pyplot as plt
 import joblib
 from fydjob import utils
 from gensim.models import Word2Vec
+from fydjob.NLPFrame import NLPFrame
+import requests
+
 
 def app():
-    # get data, use API later instead
-    data = joblib.load('/Users/jasminkazi/code/mizzle-toe/find-your-dream-job/fydjob/output/indeed_proc/processed_data.joblib')
-    data = data.drop(columns=['job_info_tokenized','job_text_tokenized_titlecase', 'job_title_tokenized'])
-    data = data.sample(n=2000)
+    # get data from
+    #api
+    #url = 'http://0.0.0.0:3000'
+    #response = requests.get(url)
+    #response.json()
+
+    #local data
+    data = NLPFrame().df
+    #data = joblib.load('/Users/jasminkazi/code/mizzle-toe/find-your-dream-job/fydjob/output/indeed_proc/processed_data.joblib')
+    data = data.drop(columns=['job_info_tokenized','job_text_tokenized_titlecase', 'job_title_tokenized','job_text_tokenized'])
+    #data = data.sample(n=2000)
 
     #Sidebar
     # Title
@@ -150,7 +160,7 @@ def app():
 
     #create the skill set for all jobs and count the occurences
     all_vacancies=[]
-    for job in data['job_text_tokenized']:
+    for job in data['job_text_tokenized_processed']:
         #print(len(job))
         all_vacancies = all_vacancies + job
     total_occurences = get_skill_aggr(all_vacancies)
@@ -183,12 +193,6 @@ def app():
 
         c_skills= alt.Chart(source).mark_bar().encode(
         x = ('count:Q'),
-        #i tried getting the top N to work here, so we wouldn't have to filter on top n in the source df
-        # y = alt.Y('skill',sort='-x'),
-        #     ).add_selection(selection).transform_window(
-        #         rank='rank(count)',
-        #         sort=[alt.SortField('count', order='descending')]
-        #         ).transform_filter((selection) & (alt.datum.rank < 10))
         y = alt.Y('skill',sort='-x')).add_selection(selection).transform_filter(selection)
         
         return c_skills

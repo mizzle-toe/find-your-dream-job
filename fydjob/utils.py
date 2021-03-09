@@ -179,9 +179,6 @@ def category_tagger(series):
         except:
             return "Sorry,somthing went wrong"
 
-
-
-
 def get_similarities(text, text_vector, keep_perfect=True):
     '''Returns a list of similarity scores between a text and all texts in a text vector.
     Similarity a value between 0 and 1 that shows the proportion of shared unique
