@@ -69,4 +69,6 @@ class Pipeline:
         ndf = NLPFrame()
         ndf.add_token_fields()
         ndf.process_text()
+        ndf.add_skills() 
+        print("Columns and NaN values:")
         print(ndf.df.isna().sum())
