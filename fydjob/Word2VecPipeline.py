@@ -1,6 +1,11 @@
 
 from gensim.models import Word2Vec
+import os
+import fydjob
 import json
+
+
+home_path = os.path.dirname(fydjob.__file__)
 
 class WordPipeline:
 
@@ -54,7 +59,7 @@ class WordPipeline:
             query = [x.lower() for x in query]
 
 
-        with open("../fydjob/data/dicts/skills_dict.json") as json_file:
+        with open(os.path.join(home_path,"data","dicts","skills_dict.json")) as json_file:
             self.dictionary = json.load(json_file)
 
 
