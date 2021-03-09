@@ -22,12 +22,23 @@ Structuring the entire data pipeline.
 
 """
 
-from fydjob import IndeedProcessor, Database, NLPFrame
+import os
+import fydjob
+from fydjob.NLPFrame import NLPFrame
+from fydjob.IndeedProcessor import IndeedProcessor
+from fydjob.Database import Database
+
+
+home_path = os.path.dirname(fydjob.__file__) 
+
 
 class Pipeline:
     
      def __init__(self):
-         ...
+         #this does not seem to work
+         output_folder = os.path.join(home_path, 'output')
+         if not os.path.exists(output_folder):
+             os.mkdir(output_folder)
          
      def long_pipeline(self):
          '''Performs the full pipeline (see readme).'''
@@ -57,4 +68,5 @@ class Pipeline:
         '''Short pipeline starting from database (see readme).'''
         ndf = NLPFrame()
         ndf.add_token_fields()
-        ndf.process_text() 
+        ndf.process_text()
+        print(ndf.df.isna().sum())

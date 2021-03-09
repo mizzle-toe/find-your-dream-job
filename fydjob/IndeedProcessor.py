@@ -15,7 +15,6 @@ import joblib
 
 home_path = os.path.dirname(fydjob.__file__) 
 
-
 class IndeedProcessor:
     '''Process Indeed job posting files and output one dataframe.'''
     def __init__(self):
