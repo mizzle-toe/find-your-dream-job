@@ -155,7 +155,7 @@ def category_tagger(series):
         '''
         This function assigns the respective category to the recommended list
         '''
-        with open("../fydjob/data/dicts/skills_dict.json") as json_file:
+        with open(os.path.join(home_path,"data","dicts","skills_dict.json")) as json_file:
             dictionary= json.load(json_file)
 
             business_dict = dictionary["business"]
