@@ -1,3 +1,12 @@
+'''
+1. Look for a saved model and if present, load it
+    2. If not, instantiate empty model 
+    3. Add a new field to df with processed text 
+    4. Build vocab 
+    5. Train and save model 
+6. Prediction
+'''
+
 
 from gensim.models import Word2Vec
 import os
@@ -6,20 +15,20 @@ import json
 
 
 home_path = os.path.dirname(fydjob.__file__)
+model_path = os.path.join(home_path, 'data', 'models', 'w2v_model_baseline.model')
 
 class WordPipeline:
 
-    def __init__(self,path = None):
+    def __init__(self, path = model_path):
         '''
         pass a path for the saved model file to instanciate a trained model or
         instanciate a empty model without an argument
         '''
-
-
-        if path:
+        if os.path.exists(path):
             self.w2v_model = Word2Vec.load(path)
         else:
-
+            #TODO: DEFINE PIPELINE FOR BUILDING THE MODEL
+            
             self.w2v_model = Word2Vec(min_count=20,
                              window=2,
                              size=20,
@@ -28,10 +37,14 @@ class WordPipeline:
                              min_alpha=0.0007,
                              negative=20,
                         )
+            
+    def process_text_field(self, df):
+        ''''''
+        
 
-    def build_vocab(self,df):
+    def build_vocab(self,text_field):
         "build vocabulary for the w2v model"
-        self.w2v_model.build_vocab(df, progress_per=10000)
+        self.w2v_model.build_vocab(text_field, progress_per=10000)
 
 
     def train(self,df):
@@ -52,25 +65,18 @@ class WordPipeline:
         is not found
         '''
 
-
         if type(query) == str:
             query = query.lower()
         elif type(query) == list:
             query = [x.lower() for x in query]
 
-
         with open(os.path.join(home_path,"data","dicts","skills_dict.json")) as json_file:
             self.dictionary = json.load(json_file)
-
-
 
         term_list = []
         for cat in self.dictionary.keys():
             for word in self.dictionary[cat]:
                 term_list.append(word)
-
-
-
 
         try:
             model_skills = self.most_similar(query,topn=100)
