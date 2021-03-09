@@ -11,5 +11,5 @@ drivers/chromedriver
 indeed-preproc
 fydjob/output/
 fydjob/database/
-fydjob/data/big_models
+fydjob/big_models
 fydjob/discarded.py
