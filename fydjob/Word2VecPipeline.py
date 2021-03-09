@@ -1,17 +1,14 @@
-'''
-1. Look for a saved model and if present, load it
-    2. If not, instantiate empty model 
-    3. Add a new field to df with processed text 
-    4. Build vocab 
-    5. Train and save model 
-6. Prediction
-'''
-
-
-from gensim.models import Word2Vec
 import os
-import fydjob
 import json
+import fydjob
+from gensim.models import Word2Vec
+from fydjob.W2VUtils import remove_number
+from fydjob.W2VUtils import remove_punctuation_mod
+from fydjob.W2VUtils import remove_stopwords
+from fydjob.W2VUtils import lemmatize_words
+from fydjob.W2VUtils import to_lower
+from nltk.tokenize import sent_tokenize
+
 
 
 home_path = os.path.dirname(fydjob.__file__)
@@ -19,16 +16,16 @@ model_path = os.path.join(home_path, 'data', 'models', 'w2v_model_baseline.model
 
 class WordPipeline:
 
-    def __init__(self, path = model_path):
+    def __init__(self, path = None):
         '''
         pass a path for the saved model file to instanciate a trained model or
         instanciate a empty model without an argument
         '''
-        if os.path.exists(path):
+        if path:
             self.w2v_model = Word2Vec.load(path)
         else:
             #TODO: DEFINE PIPELINE FOR BUILDING THE MODEL
-            
+
             self.w2v_model = Word2Vec(min_count=20,
                              window=2,
                              size=20,
@@ -37,20 +34,44 @@ class WordPipeline:
                              min_alpha=0.0007,
                              negative=20,
                         )
-            
+
     def process_text_field(self, df):
-        ''''''
-        
+        '''
+        preprocess piple that returns a formatted text corpus as a list of
+        tokens
+        '''
+        self.df = df
+        self.df = self.df[self.df["tag_language"] == "en"]
+        self.df["job_text"] = self.df["job_text"].apply(to_lower)\
+                                    .apply(remove_number)\
+                                    .apply(lambda x : x.replace('\n',' '))\
+                                    .apply(remove_punctuation_mod)\
+                                    .apply(lambda x: sent_tokenize(x))\
+                                    .apply(remove_stopwords)\
+                                    .apply(lemmatize_words)
+
+        sentences = self.df["job_text"].tolist()
+        self.text_field = []
+        for second in sentences:
+            for first in second:
+                self.text_field.append(first)
+
+        return self.text_field
+
 
     def build_vocab(self,text_field):
         "build vocabulary for the w2v model"
         self.w2v_model.build_vocab(text_field, progress_per=10000)
 
 
-    def train(self,df):
+    def train(self,text_field):
         "train the model on the text"
-        self.w2v_model.train(df, total_examples=self.w2v_model.corpus_count,
+        self.w2v_model.train(text_field, total_examples=self.w2v_model.corpus_count,
                                  epochs=30, report_delay=1)
+
+    def save_model(self,fname):
+        "saves the model as a .model file"
+        self.w2v_model.save(fname)
 
     def most_similar(self,query,topn = 10):
         "return the most similar words in the vector space"
