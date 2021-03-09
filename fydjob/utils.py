@@ -153,20 +153,33 @@ def question_marks(size, before = [], after =[]):
 
 
 def category_tagger(series):
-         '''
+        '''
         This function assigns the respective category to the recommended list
         '''
-        for i in series:
-            if i in business_dict:
-                return (i,"business")
-            if i in knowledge_dict:
-                return (i,"knowledge")
-            if i in programming_dict:
-                return (i,"programming")
-            if i in soft_skills_dict:
-                return (i,"soft_skills")
-            if i in tech_adjectives_dict:
-                return (i,"tech_adjectives")
+        with open("../fydjob/data/dicts/skills_dict.json") as json_file:
+            dictionary= json.load(json_file)
+
+            business_dict = dictionary["business"]
+            knowledge_dict = dictionary["knowledge"]
+            programming_dict = dictionary["programming"]
+            soft_skills_dict = dictionary["soft_skills"]
+
+        try:
+            tagged_series = []
+            for i in series:
+                if i in business_dict:
+                    tagged_series.append((i,"business"))
+                if i in knowledge_dict:
+                    tagged_series.append((i,"knowledge"))
+                if i in programming_dict:
+                    tagged_series.append((i,"programming"))
+                if i in soft_skills_dict:
+                    tagged_series.append((i,"soft_skills"))
+
+            return tagged_series
+        except:
+            return "Sorry,somthing went wrong"
+
 
 def get_similarities(text, text_vector, keep_perfect=True):
     '''Returns a list of similarity scores between a text and all texts in a text vector.
