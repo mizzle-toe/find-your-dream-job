@@ -152,21 +152,21 @@ def question_marks(size, before = [], after =[]):
     return ','.join(lst)
 
 
-def category_tagger(series):
-         '''
-        This function assigns the respective category to the recommended list
-        '''
-        for i in series:
-            if i in business_dict:
-                return (i,"business")
-            if i in knowledge_dict:
-                return (i,"knowledge")
-            if i in programming_dict:
-                return (i,"programming")
-            if i in soft_skills_dict:
-                return (i,"soft_skills")
-            if i in tech_adjectives_dict:
-                return (i,"tech_adjectives")
+# def category_tagger(series):
+#     '''
+#     This function assigns the respective category to the recommended list
+#     '''
+#     for i in series:
+#         if i in business_dict:
+#             return (i,"business")
+#         if i in knowledge_dict:
+#             return (i,"knowledge")
+#         if i in programming_dict:
+#             return (i,"programming")
+#         if i in soft_skills_dict:
+#             return (i,"soft_skills")
+#         if i in tech_adjectives_dict:
+#             return (i,"tech_adjectives")
 
 def get_similarities(text, text_vector, keep_perfect=True):
     '''Returns a list of similarity scores between a text and all texts in a text vector.
