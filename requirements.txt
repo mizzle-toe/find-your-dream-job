@@ -23,6 +23,7 @@ joblib
 # NLP
 nltk
 langdetect
+gensim
 
 #frontend
 streamlit
