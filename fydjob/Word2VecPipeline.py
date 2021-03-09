@@ -1,14 +1,15 @@
 '''
 1. Look for a saved model and if present, load it
-    2. If not, instantiate empty model 
-    3. Add a new field to df with processed text 
-    4. Build vocab 
-    5. Train and save model 
+    2. If not, instantiate empty model
+    3. Add a new field to df with processed text
+    4. Build vocab
+    5. Train and save model
 6. Prediction
 '''
 
 
 from gensim.models import Word2Vec
+import fydjob.W2VUtils
 import os
 import fydjob
 import json
@@ -28,7 +29,7 @@ class WordPipeline:
             self.w2v_model = Word2Vec.load(path)
         else:
             #TODO: DEFINE PIPELINE FOR BUILDING THE MODEL
-            
+
             self.w2v_model = Word2Vec(min_count=20,
                              window=2,
                              size=20,
@@ -37,10 +38,12 @@ class WordPipeline:
                              min_alpha=0.0007,
                              negative=20,
                         )
-            
+
     def process_text_field(self, df):
-        ''''''
-        
+        '''
+        '''
+
+
 
     def build_vocab(self,text_field):
         "build vocabulary for the w2v model"

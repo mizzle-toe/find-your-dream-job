@@ -1,0 +1,112 @@
+Script started on Tue Mar  9 14:16:42 2021
+]7;file://Alexanders-MacBook-Air-2.local/Users/alexanderherdt/code/mizzle-toe/find-your-dream-job[1m[7m%[27m[1m[0m                                                                                ]7;file://Alexanders-MacBook-Air-2.local/Users/alexanderherdt/code/mizzle-toe/find-your-dream-job]2;alexanderherdt@Alexanders-MacBook-Air-2]1;..our-dream-job]7;file://Alexanders-MacBook-Air-2.local/Users/alexanderherdt/code/mizzle-toe/find-your-dream-job[0m[27m[24m[J[01;32m➜  [36mfind-your-dream-job[00m [01;34mgit:([31mnlp_preprocessing[34m) [33m✗[00m [K[19C[🐍 fydjob][30D[?1h=[?2004h[7mpython short-pipeline-run[27m[K[25D[27m[32mp[27m[32my[27m[32mt[27m[32mh[27m[32mo[27m[32mn[39m[27m [27ms[27mh[27mo[27mr[27mt[27m-[27mp[27mi[27mp[27me[27ml[27mi[27mn[27me[27m-[27mr[27mu[27mn[?1l>[?2004l
+]2;python short-pipeline-run]1;python/Users/alexanderherdt/.pyenv/versions/fydjob/bin/python: can't open file 'short-pipeline-run': [Errno 2] No such file or directory
+[1m[7m%[27m[1m[0m                                                                                ]7;file://Alexanders-MacBook-Air-2.local/Users/alexanderherdt/code/mizzle-toe/find-your-dream-job]2;alexanderherdt@Alexanders-MacBook-Air-2]1;..our-dream-job]7;file://Alexanders-MacBook-Air-2.local/Users/alexanderherdt/code/mizzle-toe/find-your-dream-job[0m[27m[24m[J[01;31m➜  [36mfind-your-dream-job[00m [01;34mgit:([31mnlp_preprocessing[34m) [33m✗[00m [K[19C[🐍 fydjob][30D[?1h=[?2004h[7mshort-pipeline-run[27m[18D[27m[32ms[27m[32mh[27m[32mo[27m[32mr[27m[32mt[27m[32m-[27m[32mp[27m[32mi[27m[32mp[27m[32me[27m[32ml[27m[32mi[27m[32mn[27m[32me[27m[32m-[27m[32mr[27m[32mu[27m[32mn[39m[?1l>[?2004l
+]2;short-pipeline-run]1;short-pipeline-run
+[nltk_data] Downloading package punkt to
+[nltk_data]     /Users/alexanderherdt/nltk_data...
+[nltk_data]   Package punkt is already up-to-date!
+[nltk_data] Downloading package wordnet to
+[nltk_data]     /Users/alexanderherdt/nltk_data...
+[nltk_data]   Package wordnet is already up-to-date!
+[nltk_data] Downloading package stopwords to
+[nltk_data]     /Users/alexanderherdt/nltk_data...
+[nltk_data]   Package stopwords is already up-to-date!
+Loading database from /Users/alexanderherdt/code/mizzle-toe/find-your-dream-job/fydjob/database/jobs.db as dataframe.
+Saved at /Users/alexanderherdt/code/mizzle-toe/find-your-dream-job/fydjob/output/nlp_frame.joblib
+Loaded from db.
+[nltk_data] Downloading package punkt to
+[nltk_data]     /Users/alexanderherdt/nltk_data...
+[nltk_data]   Package punkt is already up-to-date!
+[nltk_data] Downloading package wordnet to
+[nltk_data]     /Users/alexanderherdt/nltk_data...
+[nltk_data]   Package wordnet is already up-to-date!
+[nltk_data] Downloading package stopwords to
+[nltk_data]     /Users/alexanderherdt/nltk_data...
+[nltk_data]   Package stopwords is already up-to-date!
+Loaded from /Users/alexanderherdt/code/mizzle-toe/find-your-dream-job/fydjob/output/nlp_frame.joblib
+Tokenizing text fields...
+Saved at /Users/alexanderherdt/code/mizzle-toe/find-your-dream-job/fydjob/output/nlp_frame.joblib
+Processing job_text_tokenized
+Traceback (most recent call last):
+  File "/Users/alexanderherdt/.pyenv/versions/fydjob/bin/short-pipeline-run", line 7, in <module>
+    exec(compile(f.read(), __file__, 'exec'))
+  File "/Users/alexanderherdt/code/mizzle-toe/find-your-dream-job/scripts/short-pipeline-run", line 18, in <module>
+    main()
+  File "/Users/alexanderherdt/code/mizzle-toe/find-your-dream-job/scripts/short-pipeline-run", line 15, in main
+    p.short_pipeline()
+  File "/Users/alexanderherdt/code/mizzle-toe/find-your-dream-job/fydjob/Pipeline.py", line 71, in short_pipeline
+    ndf.process_text()
+  File "/Users/alexanderherdt/code/mizzle-toe/find-your-dream-job/fydjob/NLPFrame.py", line 85, in process_text
+    self.save_joblib()
+  File "/Users/alexanderherdt/code/mizzle-toe/find-your-dream-job/fydjob/NLPFrame.py", line 52, in save_joblib
+    joblib.dump(self.df, self.joblib_path)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/envs/fydjob/lib/python3.8/site-packages/joblib/numpy_pickle.py", line 480, in dump
+    NumpyPickler(f, protocol=protocol).dump(value)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 485, in dump
+    self.save(obj)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/envs/fydjob/lib/python3.8/site-packages/joblib/numpy_pickle.py", line 282, in save
+    return Pickler.save(self, obj)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 601, in save
+    self.save_reduce(obj=obj, *rv)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 715, in save_reduce
+    save(state)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/envs/fydjob/lib/python3.8/site-packages/joblib/numpy_pickle.py", line 282, in save
+    return Pickler.save(self, obj)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 558, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 969, in save_dict
+    self._batch_setitems(obj.items())
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 995, in _batch_setitems
+    save(v)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/envs/fydjob/lib/python3.8/site-packages/joblib/numpy_pickle.py", line 282, in save
+    return Pickler.save(self, obj)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 601, in save
+    self.save_reduce(obj=obj, *rv)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 715, in save_reduce
+    save(state)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/envs/fydjob/lib/python3.8/site-packages/joblib/numpy_pickle.py", line 282, in save
+    return Pickler.save(self, obj)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 558, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 899, in save_tuple
+    save(element)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/envs/fydjob/lib/python3.8/site-packages/joblib/numpy_pickle.py", line 282, in save
+    return Pickler.save(self, obj)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 558, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 969, in save_dict
+    self._batch_setitems(obj.items())
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 1000, in _batch_setitems
+    save(v)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/envs/fydjob/lib/python3.8/site-packages/joblib/numpy_pickle.py", line 282, in save
+    return Pickler.save(self, obj)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 558, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 969, in save_dict
+    self._batch_setitems(obj.items())
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 995, in _batch_setitems
+    save(v)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/envs/fydjob/lib/python3.8/site-packages/joblib/numpy_pickle.py", line 282, in save
+    return Pickler.save(self, obj)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 558, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 929, in save_list
+    self._batch_appends(obj)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 953, in _batch_appends
+    save(x)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/envs/fydjob/lib/python3.8/site-packages/joblib/numpy_pickle.py", line 282, in save
+    return Pickler.save(self, obj)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 558, in save
+    f(self, obj)  # Call unbound method with explicit self
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 969, in save_dict
+    self._batch_setitems(obj.items())
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/lib/python3.8/pickle.py", line 995, in _batch_setitems
+    save(v)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/envs/fydjob/lib/python3.8/site-packages/joblib/numpy_pickle.py", line 279, in save
+    wrapper.write_array(obj, self)
+  File "/Users/alexanderherdt/.pyenv/versions/3.8.6/envs/fydjob/lib/python3.8/site-packages/joblib/numpy_pickle.py", line 95, in write_array
+    pickle.dump(array, pickler.file_handle, protocol=2)
+OSError: [Errno 28] No space left on device
+[1m[7m%[27m[1m[0m                                                                                ]7;file://Alexanders-MacBook-Air-2.local/Users/alexanderherdt/code/mizzle-toe/find-your-dream-job]2;alexanderherdt@Alexanders-MacBook-Air-2]1;..our-dream-job]7;file://Alexanders-MacBook-Air-2.local/Users/alexanderherdt/code/mizzle-toe/find-your-dream-job[0m[27m[24m[J[01;31m➜  [36mfind-your-dream-job[00m [01;34mgit:([31mnlp_preprocessing[34m) [33m✗[00m [K[19C[🐍 fydjob][30D[?1h=[?2004h[?1l>[?2004l
+[1m[7m%[27m[1m[0m                                                                                ]7;file://Alexanders-MacBook-Air-2.local/Users/alexanderherdt/code/mizzle-toe/find-your-dream-job]2;alexanderherdt@Alexanders-MacBook-Air-2]1;..our-dream-job]7;file://Alexanders-MacBook-Air-2.local/Users/alexanderherdt/code/mizzle-toe/find-your-dream-job[0m[27m[24m[J[01;31m➜  [36mfind-your-dream-job[00m [01;34mgit:([31mnlp_preprocessing[34m) [33m✗[00m [K[19C[🐍 fydjob][30D[?1h=[?2004h
