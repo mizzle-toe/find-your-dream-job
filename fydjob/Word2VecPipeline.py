@@ -47,8 +47,17 @@ class WordPipeline:
         is not found
         '''
 
+
+        if type(query) == str:
+            query = query.lower()
+        elif type(query) == list:
+            query = [x.lower() for x in query]
+
+
         with open("../fydjob/data/dicts/skills_dict.json") as json_file:
             self.dictionary = json.load(json_file)
+
+
 
         term_list = []
         for cat in self.dictionary.keys():
@@ -56,8 +65,10 @@ class WordPipeline:
                 term_list.append(word)
 
 
+
+
         try:
-            model_skills = self.most_similar(query.lower(),topn=100)
+            model_skills = self.most_similar(query,topn=100)
             skill_words = []
             for i in range(len(model_skills)):
                 skill_words.append(model_skills[i][0])
