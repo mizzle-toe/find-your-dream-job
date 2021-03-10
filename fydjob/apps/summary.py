@@ -2,10 +2,8 @@ import streamlit as st
 import altair as alt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import joblib
 from fydjob import utils
-from gensim.models import Word2Vec
 from fydjob.NLPFrame import NLPFrame
 import requests
 
@@ -160,11 +158,6 @@ def app():
         c_skills_count= alt.Chart(source).mark_bar().encode(
             x = ('Count:Q'),
             y = alt.Y('Skill',sort='-x')).add_selection(selection).transform_filter(selection)
-            # y = alt.Y('Skill',sort='-x')
-            # ).transform_window(
-            #     rank = 'rank(Skill)'
-            #     ).add_selection(selection
-            #     ).transform_filter((selection)&(alt.datum.rank < 30))
         return c_skills_count
     c_skills_count = get_skill_count()
     st.write(c_skills_count)
