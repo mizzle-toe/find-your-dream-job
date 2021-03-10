@@ -13,7 +13,7 @@ from nltk.tokenize import sent_tokenize
 home_path = os.path.dirname(fydjob.__file__)
 
 class Word2VecPipeline:
-    def __init__(self, df):
+    def __init__(self, df=None):
         print("Starting Word2Vec...")
         self.filepath = os.path.join(home_path, 'data', 'models', 'w2v_model_baseline.model')        
         self.df = df
