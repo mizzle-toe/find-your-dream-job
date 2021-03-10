@@ -27,6 +27,8 @@ import fydjob
 from fydjob.NLPFrame import NLPFrame
 from fydjob.IndeedProcessor import IndeedProcessor
 from fydjob.Database import Database
+from fydjob.Doc2VecPipeline import Doc2VecPipeline
+from fydjob.Word2VecPipeline import Word2VecPipeline
 
 
 home_path = os.path.dirname(fydjob.__file__) 
@@ -64,9 +66,33 @@ class Pipeline:
          ndf.add_token_fields()
          ndf.process_text()
          
-     def short_pipeline(self):
+     def short_pipeline(self, limit=None):
         '''Short pipeline starting from database (see readme).'''
         ndf = NLPFrame()
         ndf.add_token_fields()
         ndf.process_text()
+        ndf.add_skills() 
+        
+        print('Preprocessing complete.')
+        print("Columns and NaN values:")
         print(ndf.df.isna().sum())
+        
+        if limit: 
+            df = ndf.df[:limit]
+        else:
+            df = ndf.df
+        
+        print('Instantiating models...')
+        wp = Word2VecPipeline(df)
+        dp = Doc2VecPipeline(df)
+        
+        print("Testing models")
+        
+        skill = 'python'
+        print(f'Most similar skills to {skill}:')
+        print(wp.most_similar('python'))
+        
+        print("Most similar jobs:")
+        job_text = ndf.df.job_text_tokenized.iloc[0]
+        print(dp.find_similar_jobs(job_text, 1))
+        
