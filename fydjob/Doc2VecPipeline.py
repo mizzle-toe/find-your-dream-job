@@ -95,3 +95,4 @@ class Doc2VecPipeline:
         
         return self.find_similar_jobs(tokenized_text, number_offers)
         
+    
