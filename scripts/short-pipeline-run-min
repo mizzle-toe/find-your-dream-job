@@ -12,7 +12,7 @@ from fydjob.Pipeline import Pipeline
 
 def main():
     p = Pipeline()
-    p.short_pipeline(limit=None)
+    p.short_pipeline(limit=50)
     print("Pipeline completed.")
 
 if __name__ == "__main__":
