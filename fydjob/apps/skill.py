@@ -10,16 +10,15 @@ import requests
 def app():
     # Model
     # get data from
-    #api
-    #url = 'http://0.0.0.0:3000'
-    #response = requests.get(url)
-    #response.json()
-
-    #sidebar 
+      #sidebar 
     skills = st.sidebar.text_input('Search skill','python')
     skills = skills.strip()
     #word = [skills.split(',')]
     no_skill = st.sidebar.number_input('n-closest skills',5)
+
+    API_URL = "http://0.0.0.0:3000"
+    skills_match = requests.get(API_URL + '/skills', 
+                            params = {'query': skills, 'number': no_skill}).json()
     
     #search for skill
     st.markdown("""
@@ -27,9 +26,10 @@ def app():
     st.write(skills)
     
     #model with n-recommendation
-    w2v_model = Word2VecPipeline()
-    df_words = pd.DataFrame(category_tagger(w2v_model.most_similar_skills(skills,n_recommendations= no_skill)),columns=['List of similar words','Skill category']).assign(hack='').set_index('hack')
+    lol = skills_match['skills']
 
+    df_words = pd.DataFrame({'Skill': [x[0].title() for x in lol], 'Category': [x[1].title() for x in lol]}).assign(hack='').set_index('hack')
+    
     #table
     st.write(df_words)
   

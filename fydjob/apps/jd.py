@@ -8,42 +8,30 @@ from fydjob.NLPFrame import NLPFrame
 import requests
 
 def app():
+    # model for similar offers based on text input
+    jd = st.text_area('Paste a job description you like and find similar job descriptions you could apply to','google')
+    
     # get data from
     #api
-    #url = 'http://0.0.0.0:3000'
-    #response = requests.get(url)
-    #response.json()
+    API_URL = "http://0.0.0.0:3000"
+    job_match = requests.get(API_URL + '/jobs',
+                         {'job_text': jd}).json()
+    job_match = sorted(job_match, key= lambda x: x[1])
 
     #local data
-    data = NLPFrame().df
-    data = data.drop(columns=['job_info_tokenized','job_text_tokenized_titlecase', 'job_title_tokenized','job_text_tokenized'])
-    data = data.head(5800)
+    #data = NLPFrame().df
+    #data = data.drop(columns=['job_info_tokenized','job_text_tokenized_titlecase', 'job_title_tokenized','job_text_tokenized'])
+    #data = data.head(5800)
 
     ##sidebar 
-    ## extract the tokenized job description as it is used as input for the similar job offer search
-    #selected_index = st.sidebar.selectbox('Select Job ID:', data.job_id)
-    #job_description = data.iloc[selected_index, [11]]
-
-    ## list of job offers in detail
-    #source_df = data[['job_id','skills']]
-    #st.write(source_df.assign(hack='').set_index('hack'))
-    
-    ## model to get similar offers based on the job id selection
-    # model_loaded = Doc2Vec.load('/Users/jasminkazi/code/mizzle-toe/find-your-dream-job/fydjob/data/big_models/doc2vec_3000_15_epochs')
-    # infer_vector = model_loaded.infer_vector(job_description[0])
-    # similar_documents = model_loaded.docvecs.most_similar([infer_vector], topn = 5)
-    # top_index = [text[0].replace('tag_', '') for text in similar_documents]
-    # similar_job_id = int(st.sidebar.radio('Select a similar job offer:', top_index))
-    # st.write(similar_documents)
-
-    # model for similar offers based on text input
-    jd = st.text_area('Paste a job description you like and find similar job descriptions you could apply to','we might need a dummy description here')
 
     # filter data frame based on model output 
-    model = Doc2VecPipeline()
-    similar_documents = model.find_similar_jobs_from_string(jd)
-    top_index = [text[0].replace('job_id_', '') for text in similar_documents]
-    similar_job_id = int(st.sidebar.radio('Select a similar job offer:', top_index))
+
+    #model = Doc2VecPipeline()
+    #similar_documents = model.find_similar_jobs_from_string(jd)
+    similar_documents = [int(x[0].split('_')[-1]) for x in job_match]
+    #top_index = [text[0].replace('job_id_', '') for text in similar_documents]
+    similar_job_id = int(st.sidebar.radio('Select a similar job offer:', similar_documents))
 
 
     #TODO for later: instead of printig the job tag we could print the beginning of the job text followed by ...
@@ -51,23 +39,14 @@ def app():
     #similar_job_id = int(st.sidebar.radio('Select a similar job offer:', similar_job_text))
     
     #formatting of the similar JD
-    cur_ind = data.set_index('job_id').loc[similar_job_id]
-    sim_jd = cur_ind['job_text']
-    sim_title = cur_ind['job_title']
-    sim_comp = cur_ind['company']
-    sim_skills = cur_ind['skills']
-    job_link = cur_ind['job_link']
-    #sim_title = data.loc[data['job_id'] == similar_job_id, ['job_title']].iloc[0,0]
-    #sim_comp = data.loc[data['job_id'] == similar_job_id, ['company']].iloc[0,0]
-    #sim_skills = data.loc[data['job_id'] == similar_job_id, ['skills']].iloc[0,0]
-    #sim_jd = data.loc[data['job_id'] == similar_job_id, ['job_text']].iloc[0,0]
-    #job_link = data.loc[data['job_id'] == similar_job_id, ['job_link']].iloc[0,0]
-    #skill_list = []
-    for skill in sim_skills:
-        st.write(skill[0])
-        #skill_list=skill_list.append(skill[0])
-
-
+    job = requests.get(API_URL + '/job', {'job_id': similar_job_id}).json()
+    sim_jd = job['job_text']
+    sim_title = job['job_title']
+    sim_comp = job['company']
+    sim_skills = sorted(list(set([x[0] for x in job['skills']])))
+    job_link = job['job_link']
+    
+    
     st.markdown("""
         ## Find the details for the selected similar job offer below
         ### Job Title:
@@ -78,9 +57,11 @@ def app():
     """)
     st.write(sim_comp)
     st.markdown("""
-        ### Rewuired skills:
+        ### Required skills:
     """)
-    #st.write(skill_list)
+    skills_string = ', '.join(sim_skills) 
+    
+    st.write(skills_string)
     st.markdown("""
         ### Job Description:
     """)

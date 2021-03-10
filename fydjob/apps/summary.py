@@ -11,11 +11,17 @@ import requests
 def app():
     # get data from
     #api
-    #url = 'http://0.0.0.0:3000'
-    #response = requests.get(url)
-    #response.json()
+    API_URL = "http://0.0.0.0:3000"
+    
+
+    #BIRD'S EYE VIEW
+    counts = requests.get(API_URL + '/counts').json()
+    search_terms = requests.get(API_URL + '/search_terms').json()
+    top_30 = requests.get(API_URL + '/top_companies').json()
+    skills_count = requests.get(API_URL + '/count_skills', params ={'limit': 10} ).json()
 
     #local data
+    job = requests.get(API_URL + '/job', {'job_id': 1}).json()
     data = NLPFrame().df
     data = data.drop(columns=['job_info_tokenized','job_text_tokenized_titlecase','job_text_tokenized'])
 
@@ -45,12 +51,13 @@ def app():
     
 
     # Numerical KPIs
-    no_jd = str(data['job_id'].count())
+    #no_jd = str(data['job_id'].count())
+    no_jd = str(counts['Number of avaialable jobs'])
     st.markdown("""
     ### Number of available jobs:""")
     st.write(no_jd)
 
-    no_comp = str(data['company'].nunique())
+    no_comp = str(counts[ 'Number of companies hiring'])
     st.markdown("""
     ### Number of companies hiring:""")
     st.write(no_comp)
@@ -59,17 +66,16 @@ def app():
     # Altair Charts: breakdown by...
     #job description
     st.markdown("""
-    ### Distribution of Search Terms:""")
+    ### Distribution of Search Terms in Percent:""")
 
     @st.cache(allow_output_mutation=True)
     def get_jobtitles():
 
-        source_job = pd.DataFrame(data['query_text'].value_counts().reset_index())
-        source_job= source_job.rename(columns = {'index':'Job', 'query_text':'Count'})
-        
+        source_job = pd.DataFrame({'Categories':search_terms.keys(), 'Count':search_terms.values()})
+
         c_jd= alt.Chart(source_job).mark_bar().encode(
         x='Count',
-        y='Job'
+        y='Categories'
         )
         text = c_jd.mark_text(
         align='left',
@@ -111,9 +117,7 @@ def app():
     @st.cache(allow_output_mutation=True)
     def get_top_comp():
         #df
-        source_comp = pd.DataFrame(data['company'].value_counts().reset_index())
-        source_comp= source_comp.rename(columns = {'index':'Company', 'company':'Count'})
-        source_comp = source_comp.nlargest(30, 'Count')
+        source_comp = pd.DataFrame({'Company':top_30.keys(), 'Count':top_30.values()})
         #barchart
         bars = alt.Chart(source_comp).mark_bar().encode(
             x='Count:Q',
@@ -140,15 +144,15 @@ def app():
     # skill count from utils:
     
     def get_skill_count():
-        count = utils.count_skills(data['skills'])
-        df_skills = pd.DataFrame()
-        for key in count.keys():
-            df_key=pd.DataFrame.from_dict(count[key])
-            df_key['Category']=key
-            df_skills = df_skills.append(df_key)
-        source =df_skills.rename(columns = {0:'Skill',1:'Count'}).nlargest(50, columns='Count')
+        counts = []
+        
+        for key, val in skills_count.items():
+            for t in val:
+                counts.append([t[0], t[1], key])
+        source = pd.DataFrame(counts, columns=['Skill', 'Count','Category']).sort_values('Count', ascending=False).nlargest(50, columns='Count')
+    
         #isolate the categories for the dropbox
-        categs = np.array(df_skills['Category'].unique())
+        categs = np.array(source['Category'].unique())
         category = np.insert(categs, 0, 'all')
 
         #Dropdownbox
