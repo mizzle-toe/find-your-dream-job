@@ -47,7 +47,7 @@ def top_30(limit=30):
     return df.groupby('company').count().job_id.sort_values(ascending=False)[:limit].to_dict()
 
 @app.get('/count_skills')
-def top_skills(limit=50):
+def top_skills():
     return utils.count_skills(df.skills)
 
 
