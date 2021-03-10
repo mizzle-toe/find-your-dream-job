@@ -90,5 +90,8 @@ class Doc2VecPipeline:
     def find_similar_jobs_from_string(self, string, number_offers=10):
         '''''' 
         tokenized_text = utils.tokenize_text_field(pd.Series(string)).iloc[0]
+        tokenized_text = utils.lemmatize_words(tokenized_text)
+        tokenized_text = utils.remove_stopwords_list(tokenized_text)
+        
         return self.find_similar_jobs(tokenized_text, number_offers)
         
