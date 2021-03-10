@@ -6,6 +6,7 @@ Created on Wed Mar  3 12:38:33 2021
 @author: vlud
 """
 
+from collections import Counter
 import fydjob
 import os
 import json
@@ -196,3 +197,35 @@ def get_similarities(text, text_vector, keep_perfect=True):
     similarities = sorted(similarities, key=lambda x: x[1], reverse=True)
     return similarities
 
+def get_skill_category(skill):
+    '''Return the category of a skill'''
+    skills = load_skills()
+    for cat, lst in skills.items():
+        if skill in lst:
+            return cat
+
+def extract_skills(tokenized_text):
+    '''Get the skills mentioned in a tokenized text.'''
+    skills = load_skills()
+    all_skills = [skill
+                  for lst in skills.values()
+                  for skill in lst]
+    
+    return [(token, get_skill_category(token)) 
+            for token in tokenized_text
+            if token in all_skills]
+
+def count_skills(skills_field):
+    '''Returns a count of the skills in the skills column.
+    The skills column was built with the extract_skills method.
+    Output is in the same for as the skills dictionary 
+    returned by load_skills().
+    '''
+    result = {key: [] for key in load_skills().keys()}
+    skills = Counter([skill[0]
+                      for lst in skills_field
+                      for skill in lst])
+    for skill, count in skills.items():
+        cat = get_skill_category(skill)
+        result[cat].append((skill, count))
+    return result

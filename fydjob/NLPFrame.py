@@ -84,7 +84,15 @@ class NLPFrame:
                                                   .apply(utils.remove_stopwords_list)
             self.save_joblib()
         else:
-            print("Processed column already found.")
+            print("Processed column already found.") 
+            
+    def add_skills(self, text_field='job_text_tokenized', force=False):
+        colname = 'skills'
+        if force or colname not in self.df.columns:
+            self.df[colname] = self.df[text_field].apply(utils.extract_skills)
+            self.save_joblib()
+        else:
+            print("Skills column already found.")
             
     def get_duplicates(self, field='job_text_tokenized', threshold=.95):
         '''Identifies duplicates according to the 'shared unique tokens' similarity score.
@@ -130,12 +138,3 @@ class NLPFrame:
         sdi_path = os.path.join(home_path, 'output', 'sims_duplicates_ids.joblib') 
         joblib.dump(job_ids_to_remove, sdi_path)
         print("Saved duplicate IDs at", sdi_path)
-        
-            
-ndf = NLPFrame() 
-#ndf.add_token_fields()
-#ndf.process_text()
-#job_ids_to_drop = ndf.get_duplicates()
-#joblib.drop(job_ids_to_drop, 'output/job_ids_to_drop.joblib')
-#ndf.add_token_fields()
-#ndf.process_text()
