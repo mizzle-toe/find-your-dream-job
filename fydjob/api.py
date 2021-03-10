@@ -24,8 +24,8 @@ model_path = os.path.join(home_path, 'data', 'models', 'w2v_model_baseline.model
 @app.get("/")
 def data():
     df = NLPFrame().df
-    df_json = df.to_json
-    return df_json
+    df_dict = df.head(5).to_dict()
+    return df_dict
 
 @app.get('/skills')
 def skills(query):
