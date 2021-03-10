@@ -18,6 +18,7 @@ def app():
 
     #sidebar 
     skills = st.sidebar.text_input('Search skill','python')
+    skills = skills.strip()
     #word = [skills.split(',')]
     no_skill = st.sidebar.number_input('n-closest skills',5)
     
