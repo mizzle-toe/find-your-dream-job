@@ -10,6 +10,7 @@ from fastapi import FastAPI
 from fydjob.Word2VecPipeline import WordPipeline
 from fydjob.utils import category_tagger
 from fydjob.NLPFrame import NLPFrame
+from fydjob.Doc2VecPipeline import DocPipeline
 import os
 import fydjob
 
@@ -28,10 +29,15 @@ def data():
     return df_dict
 
 @app.get('/skills')
-def skills(query):
-    pipeline = WordPipeline(model_path)
-    skill_list = pipeline.most_similar_skills(query,n_recommendations= 10)
+def skills(query,number):
+    word_pipe = WordPipeline(model_path)
+    skill_list = word_pipe.most_similar_skills(query,int(number))
     tagged_skills = category_tagger(skill_list)
 
-    return {'skills': tagged_skills}
+    return {"skills":tagged_skills}
+
+@app.get('/jobs')
+def jobs():
+   doc_pipe = DocPipeline()
+
 
