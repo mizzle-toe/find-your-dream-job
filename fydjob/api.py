@@ -9,8 +9,10 @@ Created on Mon Mar  8 10:47:16 2021
 from fastapi import FastAPI
 from fydjob.Word2VecPipeline import WordPipeline
 from fydjob.utils import category_tagger
+from fydjob.NLPFrame import NLPFrame
 import os
 import fydjob
+
 
 
 app = FastAPI()
@@ -20,8 +22,10 @@ model_path = os.path.join(home_path, 'data', 'models', 'w2v_model_baseline.model
 
 # define a root `/` endpoint
 @app.get("/")
-def index():
-    return {"ok": True}
+def data():
+    df = NLPFrame().df
+    df_json = df.to_json
+    return df_json
 
 @app.get('/skills')
 def skills(query):
