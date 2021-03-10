@@ -4,6 +4,7 @@ COPY . find-your-dream-job/
 COPY requirements.txt requirements.txt
 
 RUN mkdir find-your-dream-job/fydjob/output
+RUN mkdir find-your-dream-job/fydjob/big_models
 RUN pip install -r requirements.txt
 RUN pip install -e find-your-dream-job/.
 
