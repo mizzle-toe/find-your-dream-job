@@ -8,6 +8,7 @@ import fydjob
 import fydjob.utils as utils
 import joblib
 import multiprocessing
+from fydjob.NLPFrame import NLPFrame
 
 home_path = os.path.dirname(fydjob.__file__)
 
@@ -19,7 +20,12 @@ class Doc2VecPipeline:
         self.texts_tagged_path = os.path.join(self.folder, 'texts_tagged.joblib')
         
         self.d2v_model = None
-        self.df = df
+        
+        if not df:
+            self.df = NLPFrame().df
+        else:
+            self.df = df
+        
         self.texts_tagged = self.load_texts_tagged(self.df)
                 
         if not os.path.exists(self.folder):
@@ -47,7 +53,7 @@ class Doc2VecPipeline:
             return joblib.load(self.texts_tagged_path)
         else:
             series = pd.Series(list(df[field]), index=df['job_id'])
-            texts_tagged = [TaggedDocument(text, tags=['job_id_'+str(tag)]) for tag, text in enumerate(series)]
+            texts_tagged = [TaggedDocument(text, tags=[int(tag)]) for tag, text in enumerate(series)]
             joblib.dump(texts_tagged, self.texts_tagged_path)
             return texts_tagged
         
@@ -95,3 +101,4 @@ class Doc2VecPipeline:
         
         return self.find_similar_jobs(tokenized_text, number_offers)
         
+    
