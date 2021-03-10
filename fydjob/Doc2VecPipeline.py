@@ -1,20 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-
-import json
 import os
 import pandas as pd
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
 import fydjob
+import fydjob.utils as utils
 import joblib
 import multiprocessing
 
 home_path = os.path.dirname(fydjob.__file__)
 
-class DocPipeline:
-    def __init__(self, df):
-        
+class Doc2VecPipeline:
+    def __init__(self, df=None):
+        print("Starting Doc2Vec...")
         self.folder = os.path.join(home_path, 'big_models')
         self.filepath = os.path.join(self.folder, 'doc2vec.joblib')
         self.texts_tagged_path = os.path.join(self.folder, 'texts_tagged.joblib')
@@ -87,10 +86,12 @@ class DocPipeline:
         # find similar offers
         similar_documents = self.d2v_model.docvecs.most_similar([infer_vector], topn = number_offers)
         return similar_documents
-
-
-from fydjob.NLPFrame import NLPFrame
-df = NLPFrame().df
-dp = DocPipeline(df)
-dp.train()
-
+    
+    def find_similar_jobs_from_string(self, string, number_offers=10):
+        '''''' 
+        tokenized_text = utils.tokenize_text_field(pd.Series(string)).iloc[0]
+        tokenized_text = utils.lemmatize_words(tokenized_text)
+        tokenized_text = utils.remove_stopwords_list(tokenized_text)
+        
+        return self.find_similar_jobs(tokenized_text, number_offers)
+        
