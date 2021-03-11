@@ -2,6 +2,7 @@ import streamlit as st
 from fydjob.multiapp import MultiApp
 from fydjob.apps import summary, skill, jd
 
+
 app = MultiApp()
 st.markdown("""
 # Find your Dream Job""")

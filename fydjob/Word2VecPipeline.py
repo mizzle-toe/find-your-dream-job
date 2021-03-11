@@ -85,6 +85,10 @@ class Word2VecPipeline:
     def most_similar(self,query,topn = 10):
         "return the most similar words in the vector space"
         return self.w2v_model.wv.most_similar(query, topn =topn)
+    
+    def in_vocab(self, word):
+        '''Return a bool indicating if word is in vocab.'''
+        return word in self.w2v_model.wv.vocab
 
     def most_similar_skills(self,query,n_recommendations=10):
         '''
@@ -111,7 +115,6 @@ class Word2VecPipeline:
             skill_words = []
             for i in range(len(model_skills)):
                 skill_words.append(model_skills[i][0])
-
 
             similar_skills = [skill for skill in skill_words if skill in term_list][0:n_recommendations]
 
