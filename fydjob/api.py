@@ -32,13 +32,12 @@ def job(job_id):
 
 @app.get('/jobs_title')
 def jobs_title(job_ids):
-    #job_ids = [int(x) for x in job_ids.split(',')]
-    #job_ids = eval(job_ids
     job_ids = [int(x) for x in job_ids.split(',')]
     #return job_ids
     sel = df[['job_id', 'job_title']].set_index('job_id')
     present = [id_ for id_ in job_ids
-               if id_ in sel.index]
+               #if id_ in df.job_id
+               ]
     return sel.loc[job_ids].to_dict()['job_title']
 
 @app.get('/counts')
@@ -47,7 +46,7 @@ def counts(query=None):
         query_tokens = utils.tokenize_text(query)
         sel = df[df.job_title_tokenized.apply(lambda x: all([token in x for token in query_tokens]))]
     else:
-        sel = df
+        sel = df.copy()
     
     result = {'Number of avaialable jobs': len(sel),
               'Number of companies hiring': len(sel.company.unique())}
@@ -60,7 +59,7 @@ def search_terms(query):
         query_tokens = utils.tokenize_text(query)
         sel = df[df.job_title_tokenized.apply(lambda x: all([token in x for token in query_tokens]))] 
     else:
-        sel = df
+        sel = df.copy()
     
     sel = sel.query_text[df.query_text != 'NULL']
     return (sel.value_counts(True) * 100).apply(lambda x: round(x)).to_dict()
@@ -72,7 +71,7 @@ def top_30(query=None, limit=30):
         query_tokens = utils.tokenize_text(query)
         sel = df[df.job_title_tokenized.apply(lambda x: all([token in x for token in query_tokens]))]
     else:
-        sel = df
+        sel = df.copy()
     return sel.groupby('company').count().job_id.sort_values(ascending=False)[:limit].to_dict()
 
 @app.get('/count_skills')
@@ -81,7 +80,7 @@ def top_skills(query):
         query_tokens = utils.tokenize_text(query)
         sel = df[df.job_title_tokenized.apply(lambda x: all([token in x for token in query_tokens]))]
     else:
-        sel = df
+        sel = df.copy()
     return utils.count_skills(sel.skills)
 
 @app.get('/skills')
@@ -111,6 +110,7 @@ def skills(query, number=5):
 
 @app.get('/jobs')
 def jobs(job_text, limit=10):
-   doc_pipe = Doc2VecPipeline()
-   return doc_pipe.find_similar_jobs_from_string(job_text, number_offers=limit)
-
+    doc_pipe = Doc2VecPipeline()
+    result = doc_pipe.find_similar_jobs_from_string(job_text, number_offers=limit)
+    result = [(int(x[0]), x[1]) for x in result if x[0] != 0]
+    return result
