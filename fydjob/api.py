@@ -39,7 +39,7 @@ def counts():
 @app.get('/search_terms')
 def search_terms():
     sel = df.query_text[df.query_text != 'NULL']
-    return (sel.value_counts(True) * 100).apply(lambda x: round(x,2)).to_dict()
+    return (sel.value_counts(True) * 100).apply(lambda x: round(x)).to_dict()
 
 
 @app.get('/top_companies')
@@ -49,7 +49,6 @@ def top_30(limit=30):
 @app.get('/count_skills')
 def top_skills():
     return utils.count_skills(df.skills)
-
 
 @app.get('/skills')
 def skills(query,number=5):
