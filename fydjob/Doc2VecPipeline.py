@@ -21,7 +21,7 @@ class Doc2VecPipeline:
         
         self.d2v_model = None
         
-        if not df:
+        if df is None:
             self.df = NLPFrame().df
         else:
             self.df = df
