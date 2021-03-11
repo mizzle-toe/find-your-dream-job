@@ -11,19 +11,22 @@ import multiprocessing
 from fydjob.NLPFrame import NLPFrame
 
 home_path = os.path.dirname(fydjob.__file__)
+df_all = NLPFrame().df
 
 class Doc2VecPipeline:
-    def __init__(self):
+    def __init__(self, df=None):
         print("Starting Doc2Vec...")
         self.folder = os.path.join(home_path, 'big_models')
         self.filepath = os.path.join(self.folder, 'doc2vec.joblib')
         self.texts_tagged_path = os.path.join(self.folder, 'texts_tagged.joblib')
-        
         self.d2v_model = None
-        self.df = NLPFrame().df
+        if df is None:
+            self.df = df_all.copy()
+        else:
+            self.df = df
         
         #index df by job_id! 
-        self.texts_tagged = self.load_texts_tagged(self.df)
+        self.texts_tagged = self.load_texts_tagged()
                 
         if not os.path.exists(self.folder):
             os.mkdir(self.folder)            
@@ -43,14 +46,14 @@ class Doc2VecPipeline:
         self.d2v_model = joblib.load(self.filepath)
         print("Loaded model from", self.filepath) 
         
-    def load_texts_tagged(self, df, field='job_text_tokenized_processed'):
+    def load_texts_tagged(self, field='job_text_tokenized_processed'):
         '''Tag each text with correspondent job id.'''
         
         if os.path.exists(self.texts_tagged_path):
             print('Loading texts tagged...')
             return joblib.load(self.texts_tagged_path)
         else:
-            sel = df[['job_id', field]]
+            sel = self.df[['job_id', field]]
             texts_tagged = [TaggedDocument(row[1], tags=[row[0]] ) for _, row in sel.iterrows()]
             joblib.dump(texts_tagged, self.texts_tagged_path)
             return texts_tagged
@@ -93,7 +96,7 @@ class Doc2VecPipeline:
     
     def find_similar_jobs_from_string(self, string, number_offers=10):
         '''''' 
-        tokenized_text = utils.tokenize_text_field(pd.Series(string)).iloc[0]
+        tokenized_text = utils.tokenize_text(string)
         tokenized_text = utils.lemmatize_words(tokenized_text)
         tokenized_text = utils.remove_stopwords_list(tokenized_text)
         
