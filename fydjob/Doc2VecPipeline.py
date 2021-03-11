@@ -13,19 +13,16 @@ from fydjob.NLPFrame import NLPFrame
 home_path = os.path.dirname(fydjob.__file__)
 
 class Doc2VecPipeline:
-    def __init__(self, df=None):
+    def __init__(self):
         print("Starting Doc2Vec...")
         self.folder = os.path.join(home_path, 'big_models')
         self.filepath = os.path.join(self.folder, 'doc2vec.joblib')
         self.texts_tagged_path = os.path.join(self.folder, 'texts_tagged.joblib')
         
         self.d2v_model = None
+        self.df = NLPFrame().df
         
-        if not df:
-            self.df = NLPFrame().df
-        else:
-            self.df = df
-        
+        #index df by job_id! 
         self.texts_tagged = self.load_texts_tagged(self.df)
                 
         if not os.path.exists(self.folder):
@@ -48,12 +45,13 @@ class Doc2VecPipeline:
         
     def load_texts_tagged(self, df, field='job_text_tokenized_processed'):
         '''Tag each text with correspondent job id.'''
+        
         if os.path.exists(self.texts_tagged_path):
             print('Loading texts tagged...')
             return joblib.load(self.texts_tagged_path)
         else:
-            series = pd.Series(list(df[field]), index=df['job_id'])
-            texts_tagged = [TaggedDocument(text, tags=[int(tag)]) for tag, text in enumerate(series)]
+            sel = df[['job_id', field]]
+            texts_tagged = [TaggedDocument(row[1], tags=[row[0]] ) for _, row in sel.iterrows()]
             joblib.dump(texts_tagged, self.texts_tagged_path)
             return texts_tagged
         

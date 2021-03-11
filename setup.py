@@ -13,5 +13,5 @@ setup(name='fydjob',
       test_suite='tests',
       # include_package_data: to install data from MANIFEST.in
       include_package_data=True,
-      scripts=['scripts/short-pipeline-run'],
+      scripts=['scripts/short-pipeline-run', 'scripts/short-pipeline-run-min'],
       zip_safe=False)

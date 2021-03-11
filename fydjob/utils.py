@@ -81,6 +81,9 @@ def tokenize_text_field(series, to_lowercase=True):
     series = series.apply(word_tokenize)
     return series
 
+def tokenize_text(string):
+    return [word.lower() for word in word_tokenize(string)]
+
 def get_unique_tokens(text_field):
     '''Returns set of unique tokens from a tokenized text field.'''
     return set([token
