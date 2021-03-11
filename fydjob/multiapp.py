@@ -22,7 +22,7 @@ class MultiApp:
         app.run()
     """
     def __init__(self):
-        self.API_URL = "http://0.0.0.0:3000"
+        self.API_URL = "http://0.0.0.0:8000"
         self.apps = []
 
     def add_app(self, title, func):
