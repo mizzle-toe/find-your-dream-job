@@ -21,9 +21,9 @@ def app():
     skills_count = requests.get(API_URL + '/count_skills', params ={'limit': 10} ).json()
 
     #local data
-    job = requests.get(API_URL + '/job', {'job_id': 1}).json()
-    data = NLPFrame().df
-    data = data.drop(columns=['job_info_tokenized','job_text_tokenized_titlecase','job_text_tokenized'])
+    #job = requests.get(API_URL + '/job', {'job_id': 1}).json()
+    #data = NLPFrame().df
+    #data = data.drop(columns=['job_info_tokenized','job_text_tokenized_titlecase','job_text_tokenized'])
 
     #Sidebar
     # Title
@@ -33,21 +33,14 @@ def app():
 
     # store Input in variable
     jd = st.sidebar.text_input('Job Description')
-    #city = st.sidebar.text_input('City', 'Berlin')
-    #comp = st.sidebar.text_input('Company')
+
     # use a regular expression for filtering the df, as Data Scientist (m/w/x) would be filtered out
     regex_jd = '^'+ jd
-    #regex_city = '^'+ city
-    #regex_comp = '^'+ comp
+
     #Button: if button is clicked, jump to next page and show exploratory view
     if st.sidebar.button('Analyze'):
-        
         # filter data based on job input
         data = data.loc[data.job_title.str.contains(regex_jd)]  
-        # filter data based on city input  only if we get the city
-        #data = data.loc[data.location.str.contains(regex_city)]  
-        # filter data based on job input
-        #data = data.loc[data.job_title.str.contains(regex_comp)]
     
 
     # Numerical KPIs
@@ -92,20 +85,26 @@ def app():
 
     #languages
     st.markdown("""
-    ### Available jobs broken down by posting language:""")
+    ### Available jobs broken down by posting language in percent:""")
 
     @st.cache(allow_output_mutation=True)
     def get_languages():
-        source_lang = pd.DataFrame(data['tag_language'].value_counts()).reset_index()
-        source_lang = source_lang.rename(columns = {'index':'Posting Language', 'tag_language':'Count'})
-        c_language = alt.Chart(source_lang).transform_joinaggregate(
-            Total='sum(Count)',
-        ).transform_calculate(
-            Percentage="datum.Count / datum.Total"
-        ).mark_bar().encode(
-            alt.X('Percentage:Q', axis=alt.Axis(format='.0%')),
-            y='Posting Language:N'
+        source_lang = pd.DataFrame({"Language" : ['German','English'], "Percentage": ['0.24','0.76']})
+        #source_lang = pd.DataFrame(data['tag_language'].value_counts()).reset_index()
+        #source_lang = source_lang.rename(columns = {'index':'Posting Language', 'tag_language':'Count'})
+        
+        c_language= alt.Chart(source_lang).mark_bar().encode(
+        alt.X('Percentage:Q', axis=alt.Axis(format='.0%')),
+        y='Language'
         )
+        # c_language = alt.Chart(source_lang).transform_joinaggregate(
+        #     Total='sum(Count)',
+        # ).transform_calculate(
+        #     Percentage="datum.Count / datum.Total"
+        # ).mark_bar().encode(
+        #     alt.X('Percentage:Q', axis=alt.Axis(format='.0%')),
+        #     y='Posting Language:N'
+        # )
         return c_language
     c_lang = get_languages()
     st.write(c_lang)
