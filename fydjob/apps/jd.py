@@ -88,7 +88,7 @@ def app():
         
         joblib.dump(to_cache, 'cache.joblib')
         
-        radio(similar_jobs, docs_list)
+        #radio(similar_jobs, docs_list)
             
     try:
         cache = joblib.load('cache.joblib')
