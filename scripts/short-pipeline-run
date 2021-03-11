@@ -12,6 +12,7 @@ from fydjob.Pipeline import Pipeline
 
 def main():
     p = Pipeline()
+    print("Running short pipeline (full model)...")
     p.short_pipeline(limit=None)
     print("Pipeline completed.")
 
