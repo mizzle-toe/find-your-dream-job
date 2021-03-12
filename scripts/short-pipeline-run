@@ -8,9 +8,22 @@ Created on Mon Mar  8 11:58:50 2021
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+import fydjob
 from fydjob.Pipeline import Pipeline
+home_path = os.path.dirname(fydjob.__file__)
+
+def list_files(startpath):
+    for root, dirs, files in os.walk(startpath):
+        level = root.replace(startpath, '').count(os.sep)
+        indent = ' ' * 4 * (level)
+        print('{}{}/'.format(indent, os.path.basename(root)))
+        subindent = ' ' * 4 * (level + 1)
+        for f in files:
+            print('{}{}'.format(subindent, f))
 
 def main():
+    list_files(home_path)
     p = Pipeline()
     print("Running short pipeline (full model)...")
     p.short_pipeline(limit=None)
