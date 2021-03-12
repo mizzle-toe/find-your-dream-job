@@ -1,9 +1,6 @@
 import streamlit as st
 import altair as alt
 import pandas as pd
-from fydjob.Word2VecPipeline import Word2VecPipeline
-from fydjob.utils import category_tagger
-from fydjob.NLPFrame import NLPFrame
 import requests
 
 from fydjob.multiapp import MultiApp

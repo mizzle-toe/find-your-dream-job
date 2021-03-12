@@ -3,11 +3,8 @@ from datetime import datetime
 import hashlib
 import streamlit as st
 import altair as alt
-import pandas as pd
 import joblib
-from fydjob import utils
-from fydjob.Doc2VecPipeline import Doc2VecPipeline
-from fydjob.NLPFrame import NLPFrame
+import pandas as pd
 import requests
 import json
 from fydjob.multiapp import MultiApp
