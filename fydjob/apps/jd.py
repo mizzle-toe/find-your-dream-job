@@ -11,8 +11,8 @@ from fydjob.NLPFrame import NLPFrame
 import requests
 import json
 from fydjob.multiapp import MultiApp
-API_URL = MultiApp().API_URL
 
+API_URL = MultiApp().API_URL
 
 def load_cache(hash_):
     #create cache folder
@@ -50,24 +50,22 @@ def radio(similar_jobs, docs_list):
         sim_skills = sorted(list(set([x[0] for x in job['skills']])))
         job_link = job['job_link']
         
-        st.markdown("""
+        st.markdown('''
             ## Find the details for the selected similar job offer below
             ### Job Title:
-        """)
+        ''')
         st.write(sim_title)
-        st.markdown("""
+        st.markdown('''
             ### Company:
-        """)
+        ''')
         st.write(sim_comp)
-        st.markdown("""
+        st.markdown('''
             ### Required skills:
-        """)
+        ''')
         skills_string = ', '.join(sim_skills) 
         
         st.write(skills_string)
-        st.markdown("""
-            ### Job Description:
-        """)
+        st.markdown('''### Job Description:''')
         st.write(sim_jd)
     
         if job_link != 'NULL':
@@ -76,7 +74,7 @@ def radio(similar_jobs, docs_list):
 
 def app():
     # model for similar offers based on text input
-    jd = st.text_area('Paste a job description you like and find similar job descriptions you could apply to','google')
+    jd = st.text_area('Paste a job description and find similar job descriptions')
     hash_ = hashlib.sha224(jd.encode('utf8')).hexdigest()
     cached = load_cache(hash_)
     first_cached = False
