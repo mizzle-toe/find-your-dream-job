@@ -23,7 +23,7 @@ class Database:
         folder = os.path.join(home_path, 'database')
         
         if not os.path.exists(folder):
-            print('Creating database at', folder)
+            print('Creating database folder at', folder)
             os.mkdir(folder)
         
         self.db_path = os.path.join(folder, 'jobs.db')
