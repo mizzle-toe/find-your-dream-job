@@ -22,7 +22,8 @@ class MultiApp:
         app.run()
     """
     def __init__(self):
-        self.API_URL = "http://0.0.0.0:8000"
+        self.API_URL = "http://436ce376bb59.eu.ngrok.io"
+        #self.API_URL = "http://0.0.0.0:8000"
         self.apps = []
 
     def add_app(self, title, func):
