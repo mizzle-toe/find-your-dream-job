@@ -21,7 +21,7 @@ def load_cache(hash_):
         for file in os.listdir('cache'):
             diso = file.split('_')[0]
             date = datetime.strptime(diso, "%Y-%m-%dT%H:%M:%S.%f")
-            if (now - date).seconds > 5 * 60:
+            if (now - date).seconds > 10 * 60:
                 os.remove(os.path.join('cache', file))
         
     #look for our file
