@@ -2,8 +2,6 @@ import streamlit as st
 import altair as alt
 import numpy as np
 import pandas as pd
-#from fydjob import utils
-from fydjob.NLPFrame import NLPFrame
 from fydjob.multiapp import MultiApp
 import requests
 

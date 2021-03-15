@@ -11,7 +11,7 @@ install_requirements:
 # ----------------------------------
 
 streamlit:
-	-@streamlit run app.py
+	-@streamlit run FindYourDreamJob.py
 
 heroku_login:
 	-@heroku login
