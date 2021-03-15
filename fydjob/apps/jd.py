@@ -3,11 +3,8 @@ from datetime import datetime
 import hashlib
 import streamlit as st
 import altair as alt
-import pandas as pd
 import joblib
-from fydjob import utils
-from fydjob.Doc2VecPipeline import Doc2VecPipeline
-from fydjob.NLPFrame import NLPFrame
+import pandas as pd
 import requests
 import json
 from fydjob.multiapp import MultiApp
@@ -24,7 +21,7 @@ def load_cache(hash_):
         for file in os.listdir('cache'):
             diso = file.split('_')[0]
             date = datetime.strptime(diso, "%Y-%m-%dT%H:%M:%S.%f")
-            if (now - date).seconds > 5 * 60:
+            if (now - date).seconds > 10 * 60:
                 os.remove(os.path.join('cache', file))
         
     #look for our file

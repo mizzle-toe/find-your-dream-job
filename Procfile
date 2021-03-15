@@ -1,1 +1,1 @@
- web: sh setup.sh && streamlit run fydjob/app.py
+ web: sh setup.sh && streamlit run fydjob/FindYourDreamJob.py
