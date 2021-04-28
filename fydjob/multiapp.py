@@ -23,7 +23,7 @@ class MultiApp:
     """
     def __init__(self):
         self.API_URL = "https://find-your-dream-job-api-5eymldtyza-ew.a.run.app"
-        #self.API_URL = "http://0.0.0.0:8000"
+        self.API_URL = "http://0.0.0.0:4050"
         self.apps = []
 
     def add_app(self, title, func):

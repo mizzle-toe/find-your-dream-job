@@ -1,3 +1,24 @@
+# How to run locally
+
+Clone the repository in a new folder, create a new virtual environment and install the package. 
+
+```bash
+git clone https://github.com/mizzle-toe/find-your-dream-job.git
+pyenv virtualenv fydjob-local
+pyenv activate fydjob-local
+pip install .
+```
+
+[TODO: Explain Docker phase.]
+
+```
+streamlit run fydjob/FindYourDreamJob.py
+```
+
+If you can't run Streamlit, try deleting the `.streamlit` folder in your home directory.
+
+---
+
 # Install model
 
 Install package in development mode: 
