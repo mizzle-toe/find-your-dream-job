@@ -4,6 +4,7 @@ Clone the repository in a new folder, create a new virtual environment and insta
 
 ```bash
 git clone https://github.com/mizzle-toe/find-your-dream-job.git
+cd find-your-dream-job
 pyenv virtualenv fydjob-local
 pyenv activate fydjob-local
 pip install .
