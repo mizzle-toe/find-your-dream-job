@@ -9,7 +9,13 @@ pyenv activate fydjob-local
 pip install .
 ```
 
-[TODO: Explain Docker phase.]
+Start the Docker service and run:
+
+```
+docker run -e PORT=8000 -p 4050:8000 vladeng/find-your-dream-job:final
+```
+
+Finally:
 
 ```
 streamlit run fydjob/FindYourDreamJob.py
